@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
+import { playSound } from '../../SoundManager';
 import './CategoryMenu.css';
 
-// 🎨 จับคู่ไอคอนตามความหมายของชื่อหมวดหมู่จริงๆ (เช็คจากคำในชื่อ)
 const ICON_RULES = [
   { keywords: ['ผลไม้'], icon: '🍎' },
   { keywords: ['ผัก'], icon: '🥬' },
@@ -53,54 +53,62 @@ export default function CategoryMenu({ onSelect, onBack }) {
       });
   }, []);
 
+  const handleHover = () => playSound('tick');
+  const handleClick = (id) => {
+    playSound('click');
+    onSelect(id);
+  };
+
   if (loading) {
     return (
-      <div className="category-loading-container">
-        <div className="category-spinner"></div>
-        <div>กำลังโหลดข้อมูลเซิร์ฟเวอร์...</div>
+      <div className="pixel-loading-container">
+        <div className="pixel-text">LOADING<span className="blink">_</span></div>
       </div>
     );
   }
 
   return (
-    <div className="category-container">
-      <div className="category-glow"></div>
+    <div className="pixel-container">
+      {/* 📺 เอฟเฟกต์เส้นหน้าจอ CRT */}
+      <div className="crt-scanlines"></div>
 
-      <div className="category-header">
-        <div className="category-kicker">选择分类</div>
-        <h1 className="category-title">เลือกหมวดหมู่คำศัพท์</h1>
-      </div>
+      <div className="pixel-main-content">
+        <div className="pixel-header">
+          <div className="pixel-kicker">SELECT_STAGE</div>
+          <h1 className="pixel-title">เลือกหมวดหมู่<span className="blink">_</span></h1>
+        </div>
 
-      {error && <div className="category-error">{error}</div>}
+        {error && <div className="pixel-error">ERR: {error}</div>}
 
-      <div className="category-grid">
-        {/* 🌟 ปุ่มพิเศษ: สุ่มมั่วทุกหมวด */}
-        <button
-          onClick={() => onSelect('all')}
-          className="category-card card-random"
-          style={{ animationDelay: '0s' }}
-        >
-          <span className="category-icon">🔀</span>
-          <span className="category-name">สุ่มมั่วทุกหมวด</span>
-        </button>
-
-        {/* ปุ่มหมวดหมู่ปกติทั้ง 10 หมวด */}
-        {categories.map((cat, i) => (
+        <div className="pixel-grid">
+          {/* 🌟 ปุ่มพิเศษ: สุ่มมั่วทุกหมวด */}
           <button
-            key={cat.id}
-            onClick={() => onSelect(cat.id)}
-            className="category-card"
-            style={{ animationDelay: `${(i + 1) * 0.05}s` }}
+            onClick={() => handleClick('all')}
+            onMouseEnter={handleHover}
+            className="pixel-card pixel-random"
           >
-            <span className="category-icon">{getCategoryIcon(cat.name_th)}</span>
-            <span className="category-name">{cat.name_th}</span>
+            <span className="pixel-icon">🔀</span>
+            <span className="pixel-name">สุ่มมั่วทั้งหมด</span>
           </button>
-        ))}
-      </div>
 
-      <button className="category-back-btn" onClick={onBack}>
-        ← กลับหน้าแรก
-      </button>
+          {/* ปุ่มหมวดหมู่ปกติ */}
+          {categories.map((cat) => (
+            <button
+              key={cat.id}
+              onClick={() => handleClick(cat.id)}
+              onMouseEnter={handleHover}
+              className="pixel-card"
+            >
+              <span className="pixel-icon">{getCategoryIcon(cat.name_th)}</span>
+              <span className="pixel-name">{cat.name_th}</span>
+            </button>
+          ))}
+        </div>
+
+        <button className="pixel-back-btn" onClick={() => { playSound('click'); onBack(); }} onMouseEnter={handleHover}>
+          [ RETURN_TO_TITLE ]
+        </button>
+      </div>
     </div>
   );
 }
