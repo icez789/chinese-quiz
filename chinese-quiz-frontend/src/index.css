@@ -1,0 +1,22 @@
+@import url('https://fonts.googleapis.com/css2?family=Sarabun:wght@400;500;600;700;800&display=swap');
+
+:root {
+  --neon-blue: #00f2fe;
+  --neon-purple: #a855f7;
+  --neon-green: #34c759;
+  --neon-yellow: #ffcc00;
+  --neon-red: #ff3b30;
+  --bg-dark: #09090e;
+  --bg-panel: rgba(20, 20, 25, 0.95);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body, html {
+  margin: 0;
+  padding: 0;
+  background-color: var(--bg-dark);
+  font-family: 'Sarabun', sans-serif;
+}

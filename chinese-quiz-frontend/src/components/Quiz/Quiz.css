@@ -1,0 +1,240 @@
+/* พื้นหลังเกมอาร์เคด ไล่สีม่วงเข้มไปดำ */
+.quiz-container {
+  min-height: 100vh;
+  background: linear-gradient(135deg, #2b0f4c 0%, #09090e 100%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 20px;
+  font-family: 'Sarabun', sans-serif;
+  color: white;
+}
+
+/* -------------------------------------- */
+/* 📊 แถบคะแนนด้านบน (Score Bar)           */
+/* -------------------------------------- */
+.score-bar {
+  width: 100%;
+  max-width: 600px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  background: rgba(255, 255, 255, 0.03);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 14px;
+  padding: 14px 22px;
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #e4e4e7;
+}
+
+.score-bar span:first-child {
+  color: var(--neon-blue, #00f2fe);
+  text-shadow: 0 0 10px rgba(0, 242, 254, 0.4);
+}
+
+.combo-badge {
+  background: linear-gradient(90deg, #ff9500, #ff3b30);
+  padding: 5px 14px;
+  border-radius: 20px;
+  font-size: 0.95rem;
+  color: white;
+  box-shadow: 0 0 15px rgba(255, 149, 0, 0.5);
+  animation: combo-pop 0.3s ease;
+  white-space: nowrap;
+}
+
+@keyframes combo-pop {
+  from { transform: scale(0.7); opacity: 0; }
+  to { transform: scale(1); opacity: 1; }
+}
+
+@media (max-width: 480px) {
+  .score-bar {
+    font-size: 0.95rem;
+    padding: 12px 16px;
+    flex-wrap: wrap;
+  }
+}
+
+/* เอาเส้นขอบและพื้นหลังออก ให้เน้นที่ตัวอีโมจิล้วนๆ */
+.question-card {
+  width: 100%;
+  max-width: 600px;
+  margin-top: 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+/* อีโมจิยักษ์เด้งดึ๋ง */
+.arcade-emoji {
+  font-size: 140px;
+  margin: 30px 0;
+  animation: bounce 2s infinite;
+  filter: drop-shadow(0 10px 15px rgba(0, 0, 0, 0.5));
+}
+
+@keyframes bounce {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-20px); }
+}
+
+/* คำถามตัวใหญ่ กระแทกตา */
+.question-text {
+  font-size: 2rem;
+  font-weight: 800;
+  text-align: center;
+  margin-bottom: 40px;
+  text-shadow: 0 4px 0px #000, 0 0 15px rgba(255, 255, 255, 0.4);
+}
+
+/* เลย์เอาต์ปุ่ม 2x2 */
+.choices-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+  width: 100%;
+}
+
+/* สไตล์ปุ่มกดอาร์เคดแบบ 3 มิติ */
+.arcade-btn {
+  border: none;
+  border-radius: 16px;
+  padding: 25px 15px;
+  font-size: 1.5rem;
+  font-weight: bold;
+  color: white;
+  cursor: pointer;
+  transition: all 0.1s ease;
+  text-shadow: 1px 1px 2px rgba(0,0,0,0.5);
+  font-family: 'Sarabun', sans-serif;
+}
+
+/* กดแล้วปุ่มยุบลงไปเหมือนเกมตู้ */
+.arcade-btn:active:not(:disabled) {
+  transform: translateY(6px);
+  box-shadow: 0 0px 0px rgba(0,0,0,0.8) !important;
+}
+
+.arcade-btn:disabled {
+  cursor: not-allowed;
+  opacity: 0.7;
+}
+
+/* สีเฉพาะของแต่ละปุ่ม (แดง น้ำเงิน เขียว เหลือง) */
+.btn-color-0 { 
+  background-color: #ff3b30; 
+  box-shadow: 0 6px 0px #b92018, 0 10px 15px rgba(255, 59, 48, 0.4); 
+}
+.btn-color-1 { 
+  background-color: #007aff; 
+  box-shadow: 0 6px 0px #0056b3, 0 10px 15px rgba(0, 122, 255, 0.4); 
+}
+.btn-color-2 { 
+  background-color: #34c759; 
+  box-shadow: 0 6px 0px #248a3d, 0 10px 15px rgba(52, 199, 89, 0.4); 
+}
+.btn-color-3 { 
+  background-color: #ffcc00; 
+  color: #333;
+  text-shadow: none;
+  box-shadow: 0 6px 0px #b38f00, 0 10px 15px rgba(255, 204, 0, 0.4); 
+}
+
+/* เอฟเฟกต์ตอนตอบถูก/ผิด */
+.arcade-btn.correct {
+  background-color: #fff;
+  color: #34c759;
+  box-shadow: 0 0 30px #34c759, inset 0 0 20px #34c759 !important;
+  transform: scale(1.05);
+}
+
+.arcade-btn.wrong {
+  background-color: #333;
+  color: #666;
+  box-shadow: 0 2px 0px #111 !important;
+  transform: translateY(4px);
+}
+
+/* -------------------------------------- */
+/* ⏱️ หลอดเวลา (Timer Bar) สไตล์อาร์เคด     */
+/* -------------------------------------- */
+.timer-container {
+  width: 100%;
+  max-width: 600px;
+  height: 25px;
+  background-color: #1a1a24;
+  border-radius: 20px;
+  margin: 15px 0 25px 0;
+  overflow: hidden;
+  box-shadow: inset 0 4px 6px rgba(0,0,0,0.6), 0 0 10px rgba(0,0,0,0.5);
+  border: 2px solid #333;
+  transition: all 0.3s ease;
+}
+
+/* เอฟเฟกต์สั่นทั้งกรอบเวลาใกล้ตาย */
+.timer-container.danger-shake {
+  border-color: #ff3b30;
+  box-shadow: 0 0 20px rgba(255, 59, 48, 0.6);
+  animation: crazy-shake 0.3s infinite;
+}
+
+@keyframes crazy-shake {
+  0% { transform: translate(2px, 1px) rotate(0deg); }
+  25% { transform: translate(-2px, -1px) rotate(-1deg); }
+  50% { transform: translate(1px, 2px) rotate(1deg); }
+  75% { transform: translate(-1px, -2px) rotate(0deg); }
+  100% { transform: translate(2px, -1px) rotate(-1deg); }
+}
+
+.timer-bar {
+  height: 100%;
+  border-radius: 20px;
+  transition: width 1s linear, background-color 0.3s ease; 
+  /* ลายทาง (Stripes) หนาๆ */
+  background-image: linear-gradient(
+    45deg,
+    rgba(255, 255, 255, 0.2) 25%,
+    transparent 25%,
+    transparent 50%,
+    rgba(255, 255, 255, 0.2) 50%,
+    rgba(255, 255, 255, 0.2) 75%,
+    transparent 75%,
+    transparent
+  );
+  background-size: 30px 30px;
+  animation: stripe-move 1s linear infinite;
+}
+
+/* แอนิเมชันให้ลายทางวิ่งไปข้างหลัง */
+@keyframes stripe-move {
+  from { background-position: 30px 0; }
+  to { background-position: 0 0; }
+}
+
+/* สีปกติ (เวลาเหลือเยอะ) */
+.timer-bar.safe {
+  background-color: #34c759;
+}
+
+/* สีเตือน (เวลาเริ่มน้อย) - วิ่งเร็วขึ้น 2 เท่า */
+.timer-bar.warning {
+  background-color: #ffcc00;
+  box-shadow: inset 0 0 10px rgba(255, 255, 255, 0.5);
+  animation: stripe-move 0.5s linear infinite; 
+}
+
+/* สีอันตราย (ใกล้หมดเวลา) - วิ่งอย่างบ้าคลั่งพร้อมกระพริบแสง */
+.timer-bar.danger {
+  background-color: #ff3b30;
+  animation: stripe-move 0.2s linear infinite, pulse-glow 0.4s infinite alternate;
+}
+
+@keyframes pulse-glow {
+  from { filter: brightness(1); box-shadow: inset 0 0 5px rgba(255,255,255,0.3); }
+  to { filter: brightness(1.5); box-shadow: inset 0 0 20px rgba(255,255,255,0.8); }
+}

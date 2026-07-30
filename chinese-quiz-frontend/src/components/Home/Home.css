@@ -1,0 +1,288 @@
+/* =========================================
+   🎮 Home.css - CYBERPUNK MENU EDITION 🎮
+   ========================================= */
+
+:root {
+  --neon-blue: #00f2fe;
+  --neon-purple: #a855f7;
+  --neon-red: #ff2a2a;
+  --bg-dark: #09090e;
+}
+
+body, html {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  background-color: var(--bg-dark);
+}
+
+/* --- Layout หลัก --- */
+.home-container {
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+  overflow: hidden;
+  font-family: 'Sarabun', sans-serif;
+  padding: 40px;
+}
+
+/* --- ลายเส้นตารางพื้นหลังสไตล์ cyberpunk (เหมือนโทนหน้า Quiz/Result) --- */
+.bg-grid {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  background-image:
+    linear-gradient(rgba(0, 242, 254, 0.06) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0, 242, 254, 0.06) 1px, transparent 1px);
+  background-size: 48px 48px;
+  -webkit-mask-image: radial-gradient(ellipse at center, black 0%, transparent 72%);
+  mask-image: radial-gradient(ellipse at center, black 0%, transparent 72%);
+  pointer-events: none;
+}
+
+/* --- ตัวอักษรจีนลอยพื้นหลังสไตล์ Matrix --- */
+.matrix-rain {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.matrix-glyph {
+  position: absolute;
+  top: -10%;
+  color: var(--neon-blue);
+  font-weight: 700;
+  text-shadow: 0 0 10px rgba(0, 242, 254, 0.6);
+  animation-name: matrix-fall;
+  animation-timing-function: linear;
+  animation-iteration-count: infinite;
+  will-change: transform;
+}
+
+@keyframes matrix-fall {
+  0% { transform: translateY(0); opacity: 0; }
+  8% { opacity: 1; }
+  92% { opacity: 1; }
+  100% { transform: translateY(120vh); opacity: 0; }
+}
+
+/* เอฟเฟกต์แสงสปอตไลท์พื้นหลัง */
+.bg-glow-left {
+  position: absolute;
+  top: -10%;
+  left: -10%;
+  width: 50vw;
+  height: 50vw;
+  background: radial-gradient(circle, rgba(168,85,247,0.15) 0%, transparent 60%);
+  z-index: 0;
+}
+
+.bg-glow-right {
+  position: absolute;
+  bottom: -20%;
+  right: -10%;
+  width: 60vw;
+  height: 60vw;
+  background: radial-gradient(circle, rgba(0,242,254,0.1) 0%, transparent 60%);
+  z-index: 0;
+}
+
+/* โครงสร้างซ้าย-ขวา */
+.home-layout {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  max-width: 1400px;
+  gap: 50px;
+  z-index: 1; /* ให้อยู่เหนือแสงพื้นหลัง */
+}
+
+.home-left {
+  flex: 1.2;
+  animation: slideInLeft 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
+}
+
+.home-right {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 40px;
+  animation: slideInRight 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
+}
+
+/* --- ฝั่งซ้าย: Typography ชื่อเกม --- */
+.game-title-container {
+  text-align: left; /* จัดชิดซ้ายให้ดูมีความเป็น นิตยสาร/โปสเตอร์ */
+  position: relative;
+}
+
+
+
+.subtitle {
+  color: var(--neon-blue);
+  font-size: 1.5rem;
+  letter-spacing: 8px;
+  margin-bottom: -10px;
+  font-weight: 600;
+  text-transform: uppercase;
+  text-shadow: 0 0 15px rgba(0, 242, 254, 0.5);
+}
+
+.title {
+  color: #fff;
+  font-size: 5.5rem; /* ขยายให้ใหญ่เบิ้ม! */
+  line-height: 1.1;
+  font-weight: 900;
+  text-transform: uppercase;
+  margin: 15px 0;
+  position: relative;
+  background: linear-gradient(135deg, var(--neon-blue) 0%, #ffffff 45%, var(--neon-purple) 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  /* เพิ่มเงาสะท้อนสไตล์นีออน สีฟ้า-ม่วงผสมกัน */
+  filter: drop-shadow(0 0 20px rgba(0, 242, 254, 0.25)) drop-shadow(0 0 30px rgba(168, 85, 247, 0.2));
+}
+
+/* --- Badge สถิติ ใต้คำอธิบาย --- */
+.stat-badges {
+  display: flex;
+  gap: 12px;
+  margin-top: 26px;
+  flex-wrap: wrap;
+}
+
+.stat-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  color: #d4d4d8;
+  font-size: 0.95rem;
+  font-weight: 600;
+  padding: 8px 16px;
+  border-radius: 30px;
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+}
+
+.description {
+  color: #a1a1aa;
+  font-size: 1.3rem;
+  border-left: 4px solid var(--neon-purple);
+  padding-left: 15px;
+  margin-top: 20px;
+}
+
+/* --- ฝั่งขวา: Glassmorphism Panel --- */
+.how-to-play-card {
+  background: rgba(255, 255, 255, 0.03); /* โปร่งใสมาก */
+  backdrop-filter: blur(12px); /* เบลอฉากหลังแบบกระจก */
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-top: 1px solid rgba(255, 255, 255, 0.2);
+  border-left: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 16px;
+  padding: 30px;
+  box-shadow: 0 25px 40px rgba(0, 0, 0, 0.4);
+}
+
+.how-to-play-card h3 {
+  color: #fff;
+  font-size: 1.5rem;
+  margin-top: 0;
+  margin-bottom: 20px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.how-to-play-card ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.how-to-play-card li {
+  margin-bottom: 15px;
+  color: #d4d4d8;
+  font-size: 1.1rem;
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  transition: transform 0.2s;
+}
+
+.how-to-play-card li:hover {
+  transform: translateX(10px);
+  color: var(--neon-blue);
+}
+
+/* --- ฝั่งขวา: Cyberpunk Button --- */
+.action-wrapper {
+  display: flex;
+  justify-content: flex-end; /* ดันปุ่มไปด้านขวา */
+}
+
+.start-button {
+  background: linear-gradient(45deg, transparent 5%, var(--neon-red) 5%);
+  color: white;
+  border: none;
+  padding: 20px 60px;
+  font-size: 1.8rem;
+  font-weight: 800;
+  letter-spacing: 3px;
+  cursor: pointer;
+  text-transform: uppercase;
+  /* ✨ เฉือนมุมปุ่มสไตล์ Cyberpunk ✨ */
+  clip-path: polygon(10% 0, 100% 0, 100% 70%, 90% 100%, 0 100%, 0 30%);
+  box-shadow: 6px 0px 0px var(--neon-blue); /* เงาสีตัดกันเพิ่มความล้ำ */
+  transition: all 0.3s ease;
+  position: relative;
+}
+
+/* เอฟเฟกต์ตอนชี้เมาส์ */
+.start-button:hover {
+  background: linear-gradient(45deg, transparent 5%, #ff4d4d 5%);
+  box-shadow: -6px 0px 0px var(--neon-purple);
+  transform: scale(1.05);
+  text-shadow: 0 0 10px rgba(255,255,255,0.8);
+}
+
+.start-button:active {
+  transform: scale(0.98);
+}
+
+/* --- Animations --- */
+@keyframes slideInLeft {
+  from { opacity: 0; transform: translateX(-50px); }
+  to { opacity: 1; transform: translateX(0); }
+}
+
+@keyframes slideInRight {
+  from { opacity: 0; transform: translateX(50px); }
+  to { opacity: 1; transform: translateX(0); }
+}
+
+/* สำหรับจอขนาดเล็ก ให้เด้งกลับมาเรียงแนวตั้งเหมือนเดิม */
+@media (max-width: 968px) {
+  .home-layout {
+    flex-direction: column;
+    text-align: center;
+  }
+  .game-title-container, .how-to-play-card, .action-wrapper {
+    text-align: center;
+    align-items: center;
+    justify-content: center;
+  }
+  .title { font-size: 3.5rem; }
+  .description { border-left: none; border-bottom: 4px solid var(--neon-purple); padding: 0 0 10px 0; }
+  .stat-badges { justify-content: center; }
+}

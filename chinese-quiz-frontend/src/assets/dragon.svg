@@ -1,0 +1,76 @@
+<svg viewBox="-15 -15 430 430" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <filter id="glow" x="-60%" y="-60%" width="220%" height="220%">
+      <feGaussianBlur stdDeviation="5" result="blur"/>
+      <feMerge>
+        <feMergeNode in="blur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+    <linearGradient id="bodyGrad" x1="0%" y1="100%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#00f2fe"/>
+      <stop offset="100%" stop-color="#a855f7"/>
+    </linearGradient>
+  </defs>
+
+  <g fill="none" stroke="url(#bodyGrad)" stroke-linecap="round" stroke-linejoin="round" filter="url(#glow)">
+
+    <!-- ลำตัวมังกรขดเป็นตัว S สองชั้น จากหางล่างซ้ายไปหัวบนขวา -->
+    <path stroke-width="7"
+      d="M 45 350
+         C 15 320, 22 282, 62 268
+         C 118 250, 148 285, 128 318
+         C 110 348, 68 342, 74 313
+         C 79 286, 118 278, 138 254
+         C 162 224, 148 186, 110 180
+         C 62 173, 44 128, 82 98
+         C 120 70, 172 78, 196 54
+         C 216 34, 244 28, 268 42" />
+
+    <!-- ครีบสันหลังตามแนวลำตัว -->
+    <path stroke-width="3.5"
+      d="M 88 262 L 76 242 M 103 242 L 94 220 M 120 224 L 116 200
+         M 98 184 L 86 162 M 116 152 L 106 132 M 148 114 L 143 92
+         M 176 84 L 176 62" />
+
+    <!-- ขาหน้า + กรงเล็บ -->
+    <path stroke-width="6"
+      d="M 128 292 C 143 307, 146 327, 136 342" />
+    <path stroke-width="3.5"
+      d="M 136 342 L 126 352 M 136 342 L 138 354 M 136 342 L 146 350" />
+
+    <!-- ขาหลัง + กรงเล็บ -->
+    <path stroke-width="6"
+      d="M 68 194 C 48 204, 38 222, 46 240" />
+    <path stroke-width="3.5"
+      d="M 46 240 L 34 246 M 46 240 L 42 252 M 46 240 L 54 250" />
+
+    <!-- คอ ยกขึ้นไปหาหัว -->
+    <path stroke-width="8"
+      d="M 268 42 C 286 52, 300 48, 312 32" />
+
+    <!-- ขากรรไกรล่าง / ปากอ้า -->
+    <path stroke-width="6"
+      d="M 312 32 C 322 40, 336 42, 350 36 C 360 32, 368 38, 364 48
+         C 360 56, 348 56, 340 48" />
+  </g>
+
+  <!-- เขาคู่ -->
+  <g fill="none" stroke="url(#bodyGrad)" stroke-linecap="round" stroke-width="4" filter="url(#glow)">
+    <path d="M 296 26 C 290 14, 294 4, 306 2" />
+    <path d="M 316 24 C 318 10, 328 2, 340 4" />
+  </g>
+
+  <!-- หนวด -->
+  <g fill="none" stroke="url(#bodyGrad)" stroke-linecap="round" stroke-width="2.5" filter="url(#glow)" opacity="0.9">
+    <path d="M 353 38 C 366 38, 376 46, 380 58" />
+    <path d="M 348 48 C 358 54, 364 64, 361 76" />
+  </g>
+
+  <!-- ดวงตาเรืองแสง -->
+  <circle cx="330" cy="27" r="3.5" fill="#00f2fe" filter="url(#glow)"/>
+
+  <!-- ลูกแก้วมังกร (Dragon pearl) ลอยอยู่ใกล้ลำตัว -->
+  <circle cx="205" cy="145" r="9" fill="none" stroke="#ffffff" stroke-width="2.5" filter="url(#glow)" opacity="0.9"/>
+  <circle cx="205" cy="145" r="3" fill="#a855f7" filter="url(#glow)"/>
+</svg>
