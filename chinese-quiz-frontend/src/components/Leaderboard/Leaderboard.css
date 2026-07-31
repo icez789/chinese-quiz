@@ -1,0 +1,132 @@
+/* =========================================
+   🏆 8-BIT LEADERBOARD SCREEN
+   ========================================= */
+
+.pixel-leaderboard-wrapper {
+  min-height: 100vh;
+  background-color: var(--bg-pitch-black, #030303);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 20px;
+  font-family: 'Press Start 2P', monospace;
+  position: relative;
+  overflow: hidden;
+}
+
+.pixel-leaderboard-card {
+  position: relative;
+  z-index: 2;
+  background-color: rgba(0, 0, 0, 0.85);
+  border: 6px solid #555;
+  padding: 40px;
+  width: 100%;
+  max-width: 700px;
+  box-shadow: 12px 12px 0px #111;
+  display: flex;
+  flex-direction: column;
+  gap: 30px;
+}
+
+.pixel-leaderboard-title {
+  color: var(--pixel-yellow, #fce83a);
+  font-size: 2rem;
+  text-align: center;
+  margin: 0;
+  text-shadow: 4px 4px 0px var(--pixel-red, #ff2a2a);
+}
+
+.blink-fast {
+  animation: fast-blink 0.3s linear infinite;
+}
+
+/* --------------------------- */
+/* 📋 โครงสร้างตาราง (Flexbox) */
+/* --------------------------- */
+.pixel-table-header {
+  display: flex;
+  justify-content: space-between;
+  color: var(--pixel-blue, #00f2fe);
+  border-bottom: 4px dashed #555;
+  padding-bottom: 15px;
+  font-size: 1.2rem;
+}
+
+.pixel-table-body {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.pixel-table-row {
+  display: flex;
+  justify-content: space-between;
+  color: #ccc;
+  font-size: 1.2rem;
+  padding: 10px 0;
+}
+
+/* คอลัมน์ต่างๆ */
+.col-rank { flex: 1; text-align: left; }
+.col-name { flex: 1; text-align: center; }
+.col-score { flex: 1; text-align: right; }
+
+/* 🌟 เอฟเฟกต์สำหรับคนเก่ง */
+.rank-top3 {
+  color: #fff;
+  text-shadow: 2px 2px 0px #555;
+}
+
+.rank-first {
+  color: var(--pixel-yellow, #fce83a);
+  text-shadow: 3px 3px 0px var(--pixel-red, #ff2a2a);
+  animation: pulse-first 1s infinite alternate;
+}
+
+@keyframes pulse-first {
+  0% { transform: scale(1); }
+  100% { transform: scale(1.02); }
+}
+
+/* --------------------------- */
+/* 🕹️ ปุ่มกด */
+/* --------------------------- */
+.pixel-leaderboard-actions {
+  margin-top: 20px;
+  display: flex;
+  justify-content: center;
+}
+
+/* ใช้คลาสปุ่ม action เหมือนหน้า Result ได้เลย */
+.pixel-action-btn {
+  background: #000;
+  color: #fff;
+  border: 4px solid #fff;
+  padding: 20px 30px;
+  font-family: 'Press Start 2P', monospace;
+  font-size: 1rem;
+  cursor: pointer;
+  box-shadow: 6px 6px 0px #333;
+  transition: all 0.05s ease-out;
+  text-transform: uppercase;
+}
+
+.btn-home:hover {
+  background: #fff;
+  color: #000;
+  transform: translate(-2px, -2px);
+  box-shadow: 8px 8px 0px var(--pixel-blue, #00f2fe);
+}
+
+.btn-home:active {
+  transform: translate(4px, 4px);
+  box-shadow: 0px 0px 0px transparent;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .pixel-leaderboard-card { padding: 25px 15px; }
+  .pixel-leaderboard-title { font-size: 1.2rem; }
+  .pixel-table-header, .pixel-table-row { font-size: 0.8rem; }
+  .pixel-action-btn { font-size: 0.8rem; padding: 15px; }
+}

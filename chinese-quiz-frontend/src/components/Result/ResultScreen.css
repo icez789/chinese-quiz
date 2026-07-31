@@ -1,177 +1,192 @@
-.result-container {
+/* =========================================
+   🏆 8-BIT RESULT SCREEN
+   ========================================= */
+
+.pixel-result-wrapper {
   min-height: 100vh;
+  background-color: var(--bg-pitch-black, #030303);
   display: flex;
   justify-content: center;
   align-items: center;
-  background: linear-gradient(135deg, #1a0b2e 0%, #09090e 100%);
   padding: 20px;
-  font-family: 'Sarabun', sans-serif;
-  color: white;
+  font-family: 'Press Start 2P', 'Sarabun', monospace;
+  position: relative;
+  overflow: hidden;
 }
 
-.result-card {
-  background-color: rgba(20, 20, 25, 0.95);
-  border: 2px solid #a855f7;
-  border-radius: 20px;
+.pixel-result-card {
+  position: relative;
+  z-index: 2;
+  background-color: #000;
+  border: 6px solid var(--pixel-blue, #00f2fe);
   padding: 40px;
   width: 100%;
-  max-width: 500px;
+  max-width: 600px;
   text-align: center;
-  box-shadow: 0 0 30px rgba(168, 85, 247, 0.2);
-  animation: slide-up 0.5s ease-out;
+  box-shadow: 12px 12px 0px #111;
+  /* แอนิเมชันหล่นลงมาแบบแข็งๆ */
+  animation: drop-down 0.4s step-end;
 }
 
-@keyframes slide-up {
-  from { transform: translateY(50px); opacity: 0; }
-  to { transform: translateY(0); opacity: 1; }
+@keyframes drop-down {
+  0% { transform: translateY(-100%); opacity: 0; }
+  50% { transform: translateY(10px); opacity: 1; }
+  100% { transform: translateY(0); }
 }
 
-.result-title {
-  color: #00f2fe;
-  font-size: 2rem;
+.pixel-result-title {
+  color: var(--pixel-yellow, #fce83a);
+  font-size: 1.8rem;
   margin-bottom: 30px;
-  text-shadow: 0 0 15px rgba(0, 242, 254, 0.6);
-  letter-spacing: 2px;
+  text-transform: uppercase;
+  text-shadow: 4px 4px 0px var(--pixel-red, #ff2a2a);
 }
 
 /* --------------------------- */
-/* เอฟเฟกต์ตราประทับ Rank (หัวใจหลัก) */
+/* 🏅 ตราประทับ Rank 8-bit */
 /* --------------------------- */
-.rank-container {
+.pixel-rank-container {
   margin-bottom: 40px;
 }
 
-.rank-badge {
-  font-size: 6rem;
-  font-weight: 900;
+.pixel-rank-badge {
+  font-size: 7rem;
   line-height: 1;
   margin: 0 auto 15px;
-  font-family: 'Impact', sans-serif;
-  /* แอนิเมชันกระแทกหน้าจอ */
-  animation: stamp-drop 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275) both;
+  font-family: 'Press Start 2P', monospace;
+  animation: stamp-smash 0.3s ease-in;
 }
 
-@keyframes stamp-drop {
-  0% { transform: scale(4) rotate(-20deg); opacity: 0; }
-  100% { transform: scale(1) rotate(0deg); opacity: 1; }
+@keyframes stamp-smash {
+  0% { transform: scale(3); opacity: 0; }
+  100% { transform: scale(1); opacity: 1; }
 }
 
-/* สีแต่ละ Rank */
-/* --------------------------- */
-/* เอฟเฟกต์ Rank S ไฟลุกโชน! 🔥 */
-/* --------------------------- */
+/* สีแต่ละ Rank สไตล์ Pixel */
 .rank-s { 
-  color: #fffde7; /* แกนตัวอักษรสีขาวอมเหลืองให้ดูร้อนจัด */
-  /* สั่งให้กระแทกจอก่อน 0.6 วิ จากนั้นค่อยเริ่มเอฟเฟกต์ไฟลุก (หน่วงเวลา 0.6s) */
-  animation: stamp-drop 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275) both,
-             flame-flicker 0.15s 0.6s ease-in-out infinite alternate; 
+  color: #fff; 
+  text-shadow: 6px 6px 0px var(--pixel-pink, #ff007f), -6px -6px 0px var(--pixel-yellow, #fce83a);
+  animation: stamp-smash 0.3s ease-in, rank-s-flash 0.5s infinite alternate step-end; 
+}
+@keyframes rank-s-flash {
+  0% { color: #fff; }
+  50% { color: var(--pixel-yellow, #fce83a); }
+  100% { color: var(--pixel-pink, #ff007f); }
 }
 
-/* แอนิเมชันจำลองเปลวไฟด้วย text-shadow ดันขึ้นด้านบน (ค่า Y ติดลบ) */
-@keyframes flame-flicker {
-  0% {
-    text-shadow: 
-      0 0 10px #ffeb3b, 
-      0 -5px 15px #ff9800, 
-      0 -10px 25px #f44336, 
-      0 -15px 40px #b71c1c;
-  }
-  100% {
-    text-shadow: 
-      0 2px 15px #fff59d, 
-      0 -10px 25px #ff5722, 
-      0 -20px 35px #d32f2f, 
-      0 -25px 50px #880e4f;
-  }
-}
-.rank-a { color: #34c759; text-shadow: 0 0 25px rgba(52, 199, 89, 0.8); }
-.rank-b { color: #00f2fe; text-shadow: 0 0 25px rgba(0, 242, 254, 0.8); }
-.rank-c { color: #ffcc00; text-shadow: 0 0 25px rgba(255, 204, 0, 0.8); }
-.rank-f { color: #ff3b30; text-shadow: 0 0 25px rgba(255, 59, 48, 0.8); animation: shake 0.5s ease-in-out; }
+.rank-a { color: var(--pixel-green, #39ff14); text-shadow: 6px 6px 0px #005500; }
+.rank-b { color: var(--pixel-blue, #00f2fe); text-shadow: 6px 6px 0px #003366; }
+.rank-c { color: var(--pixel-yellow, #fce83a); text-shadow: 6px 6px 0px #665500; }
+.rank-f { color: var(--pixel-red, #ff2a2a); text-shadow: 6px 6px 0px #550000; animation: stamp-smash 0.3s ease-in, glitch 0.2s infinite; }
 
-@keyframes shake {
-  0%, 100% { transform: translateX(0); }
-  25% { transform: translateX(-10px); }
-  75% { transform: translateX(10px); }
+@keyframes glitch {
+  0%, 100% { transform: translate(0, 0); }
+  25% { transform: translate(-2px, 2px); }
+  50% { transform: translate(2px, -2px); }
+  75% { transform: translate(-2px, -2px); }
 }
 
-.rank-text {
+.pixel-rank-text {
   font-size: 1.2rem;
-  color: #d1d5db;
+  color: #ddd;
+  font-family: 'Sarabun', sans-serif;
+  font-weight: bold;
 }
 
 /* --------------------------- */
-/* กล่องโชว์คะแนนและเปอเซ็นต์     */
+/* 📊 กล่องโชว์คะแนน */
 /* --------------------------- */
-.stats-grid {
+.pixel-stats-grid {
   display: flex;
   justify-content: space-around;
   margin-bottom: 40px;
-  background: rgba(0, 0, 0, 0.3);
-  border-radius: 15px;
+  background: #111;
   padding: 20px;
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  border: 4px solid #333;
 }
 
-.stat-box {
+.pixel-stat-box {
   display: flex;
   flex-direction: column;
+  gap: 10px;
 }
 
-.stat-label {
-  font-size: 0.9rem;
-  color: #9ca3af;
-  margin-bottom: 5px;
-  letter-spacing: 1px;
+.pixel-stat-label {
+  font-size: 0.8rem;
+  color: var(--pixel-blue, #00f2fe);
 }
 
-.stat-value {
-  font-size: 2rem;
-  font-weight: bold;
+.pixel-stat-value {
+  font-size: 1.5rem;
+  color: #fff;
 }
 
-.stat-value.highlight {
-  color: #a855f7;
-  text-shadow: 0 0 10px rgba(168, 85, 247, 0.5);
+.pixel-stat-value.highlight {
+  color: var(--pixel-pink, #ff007f);
 }
 
 /* --------------------------- */
-/* ปุ่มกดเล่นใหม่                  */
+/* 🕹️ ปุ่มกด */
 /* --------------------------- */
-.result-actions {
+.pixel-result-actions {
   display: flex;
+  flex-direction: column;
   gap: 15px;
-  flex-direction: column;
 }
 
-.action-btn {
-  padding: 15px;
-  border-radius: 12px;
-  font-size: 1.2rem;
-  font-weight: bold;
+.pixel-action-btn {
+  background: #000;
+  color: #fff;
+  border: 4px solid #fff;
+  padding: 20px;
+  font-family: 'Press Start 2P', monospace;
+  font-size: 1rem;
   cursor: pointer;
-  transition: all 0.2s ease;
-  border: none;
-  font-family: 'Sarabun', sans-serif;
+  box-shadow: 6px 6px 0px #333;
+  transition: all 0.05s ease-out;
+  text-transform: uppercase;
 }
 
 .btn-retry {
-  background-color: #00f2fe;
-  color: #09090e;
-  box-shadow: 0 5px 0px #00a8b2, 0 10px 15px rgba(0, 242, 254, 0.3);
+  color: var(--pixel-green, #39ff14);
+  border-color: var(--pixel-green, #39ff14);
+  box-shadow: 6px 6px 0px #004400;
+}
+
+.btn-retry:hover {
+  background: var(--pixel-green, #39ff14);
+  color: #000;
+  transform: translate(-2px, -2px);
+  box-shadow: 8px 8px 0px #004400;
 }
 
 .btn-retry:active {
-  transform: translateY(5px);
-  box-shadow: 0 0px 0px #00a8b2;
+  transform: translate(4px, 4px);
+  box-shadow: 0px 0px 0px transparent;
 }
 
 .btn-home {
-  background-color: transparent;
-  color: white;
-  border: 2px solid rgba(255, 255, 255, 0.2);
+  color: #fff;
+  border-color: #555;
+  box-shadow: 6px 6px 0px #222;
 }
 
 .btn-home:hover {
-  background-color: rgba(255, 255, 255, 0.1);
+  background: #555;
+  transform: translate(-2px, -2px);
+  box-shadow: 8px 8px 0px #222;
+}
+
+.btn-home:active {
+  transform: translate(4px, 4px);
+  box-shadow: 0px 0px 0px transparent;
+}
+
+/* เผื่อจอมือถือ */
+@media (max-width: 768px) {
+  .pixel-result-card { padding: 25px 15px; border-width: 4px; }
+  .pixel-result-title { font-size: 1.2rem; }
+  .pixel-rank-badge { font-size: 5rem; }
+  .pixel-stat-value { font-size: 1.2rem; }
+  .pixel-action-btn { font-size: 0.8rem; padding: 15px; }
 }

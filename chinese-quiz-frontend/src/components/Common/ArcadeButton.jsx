@@ -1,25 +1,16 @@
 import React from 'react';
+import './ArcadeButton.css'; // 🌟 อย่าลืม import CSS
 
 export default function ArcadeButton({ text, index, btnState, disabled, onClick }) {
-  // btnState รับค่า: null (ยังไม่กด), 'correct' (ข้อที่ถูก), 'wrong' (ข้อที่กดผิด)
-  
-  // แจกแจงสีตาม index: 0=แดง, 1=น้ำเงิน, 2=เขียว, 3=เหลือง
-  let className = `arcade-btn btn-color-${index}`;
-  
-  // จัดการสถานะเวลาเฉลยคำตอบ
-  if (btnState === 'correct') {
-    className += ' correct';
-  } else if (btnState === 'wrong') {
-    className += ' wrong';
-  }
+  // เช็คว่าปุ่มนี้ถูก, ผิด, หรือปกติ
+  let className = "arcade-btn";
+  if (btnState === 'correct') className += " correct";
+  if (btnState === 'wrong') className += " wrong";
 
   return (
-    <button
-      className={className}
-      disabled={disabled}
-      onClick={onClick}
-    >
-      {text}
+    <button className={className} disabled={disabled} onClick={onClick}>
+      <span className="arcade-btn-number">{index + 1}.</span> 
+      <span className="arcade-btn-text">{text}</span>
     </button>
   );
 }

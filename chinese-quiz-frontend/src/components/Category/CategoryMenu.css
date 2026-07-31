@@ -453,3 +453,56 @@
   font-family: 'Press Start 2P', monospace;
   font-size: 1.5rem;
 }
+
+/* =========================================
+   🌌 PARALLAX STARFIELD (พื้นหลังอวกาศ 8-bit)
+   ========================================= */
+
+.pixel-starfield {
+  position: absolute;
+  top: 0; left: 0; right: 0; bottom: 0;
+  width: 100%; height: 100%;
+  pointer-events: none;
+  z-index: 1; /* ให้อยู่หลังสุด แต่เหนือพื้นสีดำ */
+}
+
+/* ชั้นที่ 1: ดาวดวงเล็ก สีเทาจาง วิ่งช้าสุด (อยู่ไกล) */
+.stars-slow {
+  background-image: 
+    radial-gradient(1px 1px at 20px 30px, #666, transparent),
+    radial-gradient(1px 1px at 150px 80px, #666, transparent),
+    radial-gradient(1px 1px at 300px 150px, #555, transparent),
+    radial-gradient(1px 1px at 80px 220px, #777, transparent),
+    radial-gradient(1px 1px at 220px 310px, #444, transparent),
+    radial-gradient(1px 1px at 380px 380px, #666, transparent);
+  background-size: 400px 400px; /* กำหนดขนาดแผ่นตารางเพื่อให้มันต่อกันเนียนๆ */
+  animation: move-stars 30s linear infinite;
+}
+
+/* ชั้นที่ 2: ดาวขนาดกลาง สีขาว วิ่งความเร็วปานกลาง */
+.stars-medium {
+  background-image: 
+    radial-gradient(2px 2px at 100px 50px, #aaa, transparent),
+    radial-gradient(2px 2px at 350px 120px, #ccc, transparent),
+    radial-gradient(2px 2px at 50px 250px, #aaa, transparent),
+    radial-gradient(2px 2px at 280px 330px, #bbb, transparent);
+  background-size: 400px 400px;
+  animation: move-stars 20s linear infinite;
+}
+
+/* ชั้นที่ 3: ดาวดวงใหญ่ สว่างวาบ วิ่งเร็วสุด (อยู่ใกล้) */
+.stars-fast {
+  background-image: 
+    radial-gradient(3px 3px at 50px 100px, #fff, transparent),
+    radial-gradient(3px 3px at 250px 20px, #fff, transparent),
+    radial-gradient(3px 3px at 180px 280px, #fff, transparent),
+    radial-gradient(3px 3px at 350px 300px, #fff, transparent);
+  background-size: 400px 400px;
+  animation: move-stars 10s linear infinite;
+}
+
+/* แอนิเมชันให้ดวงดาวเลื่อนลงข้างล่างแบบไร้รอยต่อ */
+@keyframes move-stars {
+  0% { background-position: 0 0; }
+  100% { background-position: 0 400px; } /* เลื่อนลงมาเท่ากับขนาดพื้นหลัง เพื่อให้มันลูปเนียนๆ */
+}

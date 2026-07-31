@@ -1,41 +1,35 @@
-import { useState, useEffect } from 'react';
-import { playSound } from '../../SoundManager'; // 🔊 Import ระบบเสียงเข้ามา
+import React, { useState, useEffect } from 'react';
 
-export default function TimerBar({ timeLimit = 10, isPaused, onTimeUp }) {
+export default function TimerBar({ timeLimit, isPaused, onTimeUp }) {
   const [timeLeft, setTimeLeft] = useState(timeLimit);
 
-  // 1. ลอจิกนับเวลาถอยหลัง (ตัวเดิม)
   useEffect(() => {
-    if (isPaused) return; 
-
-    if (timeLeft <= 0) {
-      onTimeUp();
-      return;
-    }
-
-    const timer = setInterval(() => {
-      setTimeLeft((prev) => prev - 1);
-    }, 1000);
-
-    return () => clearInterval(timer);
-  }, [timeLeft, isPaused, onTimeUp]);
-
-  // 2. 🔊 ลอจิกเล่นเสียงเตือน (ทำงานทุกครั้งที่ timeLeft เปลี่ยนแปลง)
-  useEffect(() => {
-    // ถ้ายังไม่ได้ตอบ และเวลาเหลือ 1-3 วินาที ให้เล่นเสียง
-    if (!isPaused && timeLeft <= 3 && timeLeft > 0) {
-      // 💡 เปลี่ยนชื่อ 'tick' เป็นคีย์เสียงที่คุณตั้งไว้ใน SoundManager นะครับ 
-      // (เช่น 'warning', 'countdown', 'beep')
-      playSound('tick'); 
-    }
+    if (isPaused || timeLeft <= 0) return;
+    const timer = setTimeout(() => setTimeLeft((prev) => prev - 1), 1000);
+    return () => clearTimeout(timer);
   }, [timeLeft, isPaused]);
 
+  useEffect(() => {
+    if (timeLeft === 0 && !isPaused) {
+      onTimeUp();
+    }
+  }, [timeLeft, isPaused, onTimeUp]);
+
+  // คำนวณเปอร์เซ็นต์และสีหลอด
+  const percentage = (timeLeft / timeLimit) * 100;
+  let barColor = 'var(--pixel-green)';
+  if (percentage <= 50) barColor = 'var(--pixel-yellow)';
+  if (percentage <= 20) barColor = 'var(--pixel-red)';
+
   return (
-    <div className={`timer-container ${timeLeft <= 2 && !isPaused ? 'danger-shake' : ''}`}>
-      <div 
-        className={`timer-bar ${timeLeft > 5 ? 'safe' : timeLeft > 2 ? 'warning' : 'danger'}`} 
-        style={{ width: `${(timeLeft / timeLimit) * 100}%` }}
-      ></div>
+    <div className="pixel-timer-container">
+      <div className="pixel-timer-label">TIME</div>
+      <div className="pixel-timer-track">
+        <div 
+          className="pixel-timer-fill" 
+          style={{ width: `${percentage}%`, backgroundColor: barColor }}
+        ></div>
+      </div>
     </div>
   );
 }

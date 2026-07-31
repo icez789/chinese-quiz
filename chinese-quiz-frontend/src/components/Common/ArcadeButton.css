@@ -1,0 +1,73 @@
+/* =========================================
+   🎮 ARCADE BUTTON STYLING
+   ========================================= */
+
+.arcade-btn {
+  background-color: #000; /* พื้นดำ */
+  color: #fff; /* ตัวหนังสือขาว */
+  border: 4px solid var(--pixel-blue, #00f2fe); /* ขอบสีฟ้าเรโทร */
+  padding: 15px 20px;
+  
+  /* 🌟 ใช้ฟอนต์ Sarabun เพื่อให้อ่าน พินอิน และ ภาษาจีน ชัดเจน */
+  font-family: 'Sarabun', sans-serif;
+  font-size: 1.2rem;
+  font-weight: bold;
+  text-align: left;
+  
+  cursor: pointer;
+  box-shadow: 6px 6px 0px #111; /* เงาเหลี่ยม */
+  transition: all 0.05s ease-out;
+  width: 100%;
+  
+  /* ล้างค่าปุ่มพื้นฐานของเบราว์เซอร์ทิ้ง */
+  outline: none;
+  appearance: none;
+  border-radius: 0;
+}
+
+/* สีตัวเลขข้อ */
+.arcade-btn-number {
+  color: var(--pixel-pink, #ff007f);
+  font-family: 'Press Start 2P', monospace;
+  font-size: 0.9rem;
+  margin-right: 15px;
+}
+
+/* เอฟเฟกต์ตอนเอาเมาส์ชี้ */
+.arcade-btn:hover:not(:disabled) {
+  background-color: #fff;
+  color: #000;
+  border-color: #fff;
+  box-shadow: 6px 6px 0px var(--pixel-blue, #00f2fe);
+  transform: translate(-2px, -2px); /* เด้งขึ้นนิดนึง */
+}
+
+/* เอฟเฟกต์ตอนกด */
+.arcade-btn:active:not(:disabled) {
+  transform: translate(4px, 4px);
+  box-shadow: 0px 0px 0px transparent;
+}
+
+/* 🌟 สเตตัสตอนตอบถูก */
+.arcade-btn.correct {
+  background-color: var(--pixel-green, #39ff14) !important;
+  color: #000 !important;
+  border-color: #fff !important;
+  box-shadow: 6px 6px 0px #fff !important;
+}
+
+/* 🌟 สเตตัสตอนตอบผิด */
+.arcade-btn.wrong {
+  background-color: var(--pixel-red, #ff2a2a) !important;
+  color: #fff !important;
+  border-color: #fff !important;
+  box-shadow: 6px 6px 0px #fff !important;
+  animation: shake-btn 0.3s;
+}
+
+@keyframes shake-btn {
+  0%, 100% { transform: translateX(0); }
+  25% { transform: translateX(-10px); }
+  50% { transform: translateX(10px); }
+  75% { transform: translateX(-10px); }
+}

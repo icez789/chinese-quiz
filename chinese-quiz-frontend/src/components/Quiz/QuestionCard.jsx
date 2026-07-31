@@ -1,23 +1,22 @@
 import React from 'react';
-import ArcadeButton from '../Common/ArcadeButton'; // 🔧 Import ปุ่มที่เราแยกไว้ออกมาใช้
+import { triggerPixelBurst } from '../Home/PixelBurst'; 
+import ArcadeButton from '../Common/ArcadeButton'; 
 
 export default function QuestionCard({ question, selected, feedback, onAnswer }) {
-  const emojiStr = question.image_url; 
+  const emojiStr = question.image_url; // ตัวแปรนี้คือ Emoji ของเรา!
 
   return (
-    <div className="question-card">
+    <div className="pixel-question-card">
       
-      {/* โชว์อีโมจิเด้งดึ๋ง */}
-      <div className="arcade-emoji">
-        {emojiStr}
+      {/* 📺 กรอบทีวีจอแก้ว โชว์ Emoji ตัวเบ้อเริ่ม */}
+      <div className="pixel-image-frame">
+        <div className="arcade-emoji">{emojiStr}</div>
       </div>
 
-      <h2 className="question-text">{question.question}</h2>
+      <h2 className="pixel-question-text">{question.question}</h2>
 
-      <div className="choices-grid">
+      <div className="pixel-choices-grid">
         {question.choices.map((choice, i) => {
-          
-          // เช็คสถานะของปุ่มแต่ละปุ่มว่าควรแสดงผลเป็นอะไร (ถูก, ผิด, หรือปกติ)
           let btnState = null;
           if (selected !== null) {
             if (i === question.answer) btnState = 'correct';
@@ -31,7 +30,7 @@ export default function QuestionCard({ question, selected, feedback, onAnswer })
               index={i}
               btnState={btnState}
               disabled={selected !== null}
-              onClick={() => onAnswer(i)}
+              onClick={(e) => onAnswer(i, e)} 
             />
           );
         })}

@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { playSound } from '../../SoundManager';
 import './CategoryMenu.css';
 
+// ... (ส่วน ICON_RULES และ getCategoryIcon เหมือนเดิม) ...
 const ICON_RULES = [
   { keywords: ['ผลไม้'], icon: '🍎' },
   { keywords: ['ผัก'], icon: '🥬' },
@@ -69,6 +70,11 @@ export default function CategoryMenu({ onSelect, onBack }) {
 
   return (
     <div className="pixel-container">
+      {/* 🌌 ฉากหลังอวกาศ 3 ชั้น (Parallax Starfield) */}
+      <div className="pixel-starfield stars-slow"></div>
+      <div className="pixel-starfield stars-medium"></div>
+      <div className="pixel-starfield stars-fast"></div>
+
       {/* 📺 เอฟเฟกต์เส้นหน้าจอ CRT */}
       <div className="crt-scanlines"></div>
 
@@ -81,7 +87,6 @@ export default function CategoryMenu({ onSelect, onBack }) {
         {error && <div className="pixel-error">ERR: {error}</div>}
 
         <div className="pixel-grid">
-          {/* 🌟 ปุ่มพิเศษ: สุ่มมั่วทุกหมวด */}
           <button
             onClick={() => handleClick('all')}
             onMouseEnter={handleHover}
@@ -91,7 +96,6 @@ export default function CategoryMenu({ onSelect, onBack }) {
             <span className="pixel-name">สุ่มมั่วทั้งหมด</span>
           </button>
 
-          {/* ปุ่มหมวดหมู่ปกติ */}
           {categories.map((cat) => (
             <button
               key={cat.id}

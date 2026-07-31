@@ -1,0 +1,112 @@
+/* =========================================
+   🔤 8-BIT NAME ENTRY SCREEN (TYPING MODE)
+   ========================================= */
+
+.pixel-name-wrapper {
+  min-height: 100vh;
+  background-color: var(--bg-pitch-black, #030303);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 20px;
+  font-family: 'Press Start 2P', monospace;
+  position: relative;
+  overflow: hidden;
+}
+
+.pixel-name-card {
+  position: relative;
+  z-index: 2;
+  background-color: rgba(0, 0, 0, 0.9);
+  border: 6px solid var(--pixel-pink, #ff007f);
+  padding: 50px;
+  text-align: center;
+  box-shadow: 12px 12px 0px #220011;
+  animation: drop-down 0.4s step-end;
+}
+
+.pixel-name-title {
+  color: var(--pixel-yellow, #fce83a);
+  font-size: 2rem;
+  margin-bottom: 10px;
+  text-shadow: 4px 4px 0px var(--pixel-red, #ff2a2a);
+  animation: pulse-first 1s infinite alternate;
+}
+
+.pixel-name-score {
+  color: #fff;
+  font-size: 1.5rem;
+  margin-bottom: 40px;
+}
+
+.pixel-name-instruction {
+  color: var(--pixel-blue, #00f2fe);
+  font-size: 1rem;
+  margin-bottom: 30px;
+}
+
+/* --------------------------- */
+/* 🔠 ช่องพิมพ์ข้อความ (Input) */
+/* --------------------------- */
+.pixel-input-container {
+  margin-bottom: 40px;
+}
+
+.pixel-text-input {
+  background: #111;
+  color: #fff;
+  border: 4px solid #555;
+  padding: 20px;
+  font-family: 'Press Start 2P', monospace; /* 🌟 บังคับใช้ฟอนต์พิกเซลตรงนี้เลย! */
+  font-size: 1.5rem;
+  text-align: center;
+  width: 100%;
+  max-width: 350px;
+  outline: none;
+  box-shadow: inset 6px 6px 0px #000;
+  text-transform: uppercase;
+  transition: all 0.2s;
+}
+
+/* 🌟 เอฟเฟกต์ตอนกดคลิกที่กล่องข้อความ */
+.pixel-text-input:focus {
+  border-color: var(--pixel-green, #39ff14);
+  box-shadow: inset 6px 6px 0px #000, 0 0 15px rgba(57, 255, 20, 0.3);
+}
+
+.pixel-text-input::placeholder {
+  color: #444;
+}
+
+/* --------------------------- */
+/* 🕹️ ปุ่มยืนยัน */
+/* --------------------------- */
+.pixel-submit-btn {
+  background: #000;
+  color: var(--pixel-green, #39ff14);
+  border: 4px solid var(--pixel-green, #39ff14);
+  padding: 20px 40px;
+  font-family: 'Press Start 2P', monospace;
+  font-size: 1.2rem;
+  cursor: pointer;
+  box-shadow: 6px 6px 0px #004400;
+  transition: all 0.05s ease-out;
+}
+
+.pixel-submit-btn:hover {
+  background: var(--pixel-green, #39ff14);
+  color: #000;
+  transform: translate(-2px, -2px);
+  box-shadow: 8px 8px 0px #004400;
+}
+
+.pixel-submit-btn:active {
+  transform: translate(4px, 4px);
+  box-shadow: 0px 0px 0px transparent;
+}
+
+@media (max-width: 768px) {
+  .pixel-name-card { padding: 30px 15px; }
+  .pixel-name-title { font-size: 1.5rem; }
+  .pixel-text-input { font-size: 1.2rem; padding: 15px; }
+}

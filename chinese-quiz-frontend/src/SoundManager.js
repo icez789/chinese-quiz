@@ -44,6 +44,12 @@ export function playSound(name) {
     case 'click':
       playTone(600, 0.06, 'square', 0.1, 0);
       break;
+      
+    case 'start':
+      // เสียง Insert Coin / เริ่มเกมสไตล์ 8-bit (ติ๊ง-ตริ๊งงง!)
+      playTone(987.77, 0.1, 'square', 0.2, 0);      // B5
+      playTone(1318.51, 0.3, 'square', 0.2, 0.1);   // E6
+      break;
 
     case 'finish':
       // เสียงชุดฉลองจบเกม (arpeggio ขึ้น)
