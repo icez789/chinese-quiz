@@ -1,35 +1,49 @@
-import React, { useEffect } from 'react';
+import React, { useState, useEffect } from 'react'; // 🌟 1. อย่าลืม import useState เข้ามาด้วยนะครับ
 import './Home.css';
 import { playSound } from '../../SoundManager';
 import { triggerPixelBurst } from './PixelBurst'; 
 
 export default function Home({ onStart, onLeaderboard }) {
+  // 🌟 2. เพิ่ม State สำหรับเก็บข้อความอธิบายตอนคลิกป้าย
+  const [badgeInfo, setBadgeInfo] = useState('');
+
   const handleHover = () => playSound('tick');
   
-  // 🌟 เปิดระบบคลิกแล้วระเบิด "ทุกที่บนหน้าจอ" + ปลุกระบบเสียง
+  // 🌟 3. ฟังก์ชันจัดการตอนคลิกป้าย
+  const handleBadgeClick = (e, type) => {
+    e.stopPropagation(); // กันไม่ให้ไปทริกเกอร์เอฟเฟกต์ระเบิดจอซ้ำซ้อน
+    playSound('click');
+    
+    if (type === 'stages') {
+      setBadgeInfo('> ท้าทายความจำกับ 10 หมวดหมู่คำศัพท์ ครอบคลุมทุกสถานการณ์!');
+    } else if (type === 'words') {
+      setBadgeInfo('> ระบบสุ่มคำศัพท์กว่า 100+ คำ เล่นกี่รอบก็เจอคำถามไม่ซ้ำเดิม!');
+    }
+  };
+
   useEffect(() => {
     const handleGlobalClick = (e) => {
-      triggerPixelBurst(e);
-      // 🔊 ทริคปลดล็อก: สั่งเล่นเสียงที่ไม่มีอยู่จริง (เช่น 'wakeup') 
-      // เพื่อบังคับให้เบราว์เซอร์เปิดใช้งาน AudioContext ทันทีที่ผู้เล่นคลิกจอครั้งแรก
+      if (typeof triggerPixelBurst === 'function') triggerPixelBurst(e);
       playSound('wakeup'); 
+      // 🌟 แอบซ่อนข้อความอธิบายเวลาผู้เล่นคลิกที่อื่นบนจอ
+      setBadgeInfo('');
     };
     
     window.addEventListener('click', handleGlobalClick);
     return () => window.removeEventListener('click', handleGlobalClick);
   }, []);
 
-  // 🌟 ฟังก์ชันสำหรับปุ่มเริ่มเกม
-  const handleStartClick = () => {
+  const handleStartClick = (e) => {
+    e.stopPropagation();
     playSound('start'); 
     setTimeout(() => {
       onStart();
     }, 400); 
   };
 
-  // 🌟 ฟังก์ชันสำหรับปุ่ม Leaderboard
-  const handleLeaderboardClick = () => {
-    playSound('click'); // เปลี่ยน Leaderboard เป็นเสียง click ธรรมดาจะได้ต่างกับปุ่ม Start
+  const handleLeaderboardClick = (e) => {
+    e.stopPropagation();
+    playSound('click'); 
     setTimeout(() => {
       onLeaderboard();
     }, 400); 
@@ -37,12 +51,9 @@ export default function Home({ onStart, onLeaderboard }) {
 
   return (
     <div className="pixel-home-container">
-      {/* 🌌 ฉากหลังอวกาศ */}
       <div className="pixel-starfield stars-slow"></div>
       <div className="pixel-starfield stars-medium"></div>
       <div className="pixel-starfield stars-fast"></div>
-
-      {/* 📺 เอฟเฟกต์หน้าจอ CRT */}
       <div className="crt-scanlines"></div>
 
       <div className="pixel-home-content">
@@ -61,13 +72,33 @@ export default function Home({ onStart, onLeaderboard }) {
             เกมทายคำศัพท์ภาษาจีนจากรูปภาพ<span className="blink">_</span>
           </p>
           
+          {/* 🌟 4. อัปเกรดป้ายให้กดและชี้ได้ */}
           <div className="pixel-badges">
-            <span className="pixel-badge">[ 10 STAGES ]</span>
-            <span className="pixel-badge">[ 100+ WORDS ]</span>
+            <span 
+              className="pixel-badge interactive"
+              onMouseEnter={handleHover}
+              onClick={(e) => handleBadgeClick(e, 'stages')}
+            >
+              [ 10 STAGES ]
+            </span>
+            <span 
+              className="pixel-badge interactive"
+              onMouseEnter={handleHover}
+              onClick={(e) => handleBadgeClick(e, 'words')}
+            >
+              [ 100+ WORDS ]
+            </span>
           </div>
+
+          {/* 🌟 5. กล่องข้อความอธิบายที่จะโผล่มาตอนกดป้าย */}
+          {badgeInfo && (
+            <div className="pixel-badge-info">
+              {badgeInfo}
+            </div>
+          )}
         </div>
 
-        {/* 📜 ฝั่งขวา: กติกาและปุ่มต่างๆ */}
+        {/* 📜 ฝั่งขวา: กติกาและปุ่มต่างๆ (เหมือนเดิม) */}
         <div className="pixel-home-right">
           <div className="pixel-rules-box">
             <h2 className="pixel-rules-title">HOW TO PLAY</h2>
@@ -79,7 +110,6 @@ export default function Home({ onStart, onLeaderboard }) {
             </ul>
           </div>
           
-          {/* 🌟 จัดกลุ่มปุ่มให้อยู่ด้วยกัน */}
           <div className="pixel-button-group">
             <button 
               className="pixel-start-btn" 

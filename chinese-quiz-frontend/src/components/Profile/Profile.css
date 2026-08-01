@@ -1,0 +1,231 @@
+.pixel-profile-wrapper {
+  min-height: 100vh;
+  background-color: #050505;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-family: 'Press Start 2P', monospace;
+  position: relative;
+  overflow: hidden;
+  padding: 20px;
+}
+
+.pixel-loading {
+  color: var(--pixel-green, #39ff14);
+  font-size: 1.5rem;
+  animation: blink 1s infinite;
+}
+
+.pixel-profile-card {
+  background: #000;
+  border: 4px solid var(--pixel-blue, #00f2fe);
+  box-shadow: 10px 10px 0px rgba(0, 242, 254, 0.2);
+  width: 100%;
+  max-width: 800px;
+  padding: 30px;
+  z-index: 2;
+  color: #fff;
+}
+
+.profile-header {
+  border-bottom: 4px dashed #333;
+  padding-bottom: 20px;
+  margin-bottom: 20px;
+  text-align: center;
+}
+
+.profile-title {
+  color: var(--pixel-blue, #00f2fe);
+  font-size: 1.5rem;
+  letter-spacing: 2px;
+}
+
+.profile-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+  margin-bottom: 20px;
+}
+
+.profile-section {
+  background: #111;
+  border: 2px solid #333;
+  padding: 20px;
+}
+
+.section-label {
+  font-size: 1rem;
+  color: #aaa;
+  margin-bottom: 15px;
+}
+
+.stat-row {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 15px;
+  font-size: 0.8rem;
+}
+
+.stat-value {
+  font-size: 1.2rem;
+}
+
+.badges-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 15px;
+}
+
+.badge-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background: #000;
+  border: 2px solid #555;
+  padding: 10px;
+  transition: transform 0.2s;
+  cursor: help;
+}
+
+.badge-item:hover {
+  transform: translateY(-5px);
+  border-color: var(--pixel-yellow, #fce83a);
+}
+
+.badge-icon {
+  font-size: 2rem;
+  margin-bottom: 5px;
+}
+
+.badge-name {
+  font-size: 0.6rem;
+  color: var(--pixel-yellow, #fce83a);
+}
+
+.history-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.history-list li {
+  display: flex;
+  justify-content: space-between;
+  border-bottom: 1px dashed #444;
+  padding: 10px 0;
+  font-size: 0.8rem;
+}
+
+.history-cat { color: var(--pixel-pink, #ff007f); }
+.history-score { color: #fff; }
+
+.no-history {
+  font-size: 0.8rem;
+  color: #777;
+}
+
+.back-btn {
+  width: 100%;
+  margin-top: 20px;
+  border-color: #555;
+  color: #aaa;
+}
+
+.text-blue { color: var(--pixel-blue, #00f2fe); }
+.text-pink { color: var(--pixel-pink, #ff007f); }
+.text-yellow { color: var(--pixel-yellow, #fce83a); }
+.text-green { color: var(--pixel-green, #39ff14); }
+
+@media (max-width: 768px) {
+  .profile-grid { grid-template-columns: 1fr; }
+}
+
+/* =========================================
+   🌟 GIMMICK 1: TERMINAL BOOT-UP
+   ========================================= */
+.pixel-profile-card {
+  /* เพิ่มแอนิเมชันเปิดหน้าจอให้การ์ด */
+  animation: bootUp 0.4s cubic-bezier(0.1, 0.9, 0.2, 1) forwards;
+  transform-origin: center;
+}
+
+@keyframes bootUp {
+  0% { transform: scaleY(0.005) scaleX(0); opacity: 0; }
+  50% { transform: scaleY(0.005) scaleX(1); opacity: 1; }
+  100% { transform: scaleY(1) scaleX(1); }
+}
+
+/* =========================================
+   🌟 GIMMICK 2: GLITCH EFFECT (ตัวหนังสือโดนแฮก)
+   ========================================= */
+.profile-title {
+  cursor: crosshair; /* เปลี่ยนเมาส์เป็นเป้าเล็ง */
+  display: inline-block;
+}
+
+.profile-title:hover {
+  animation: glitch-skew 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94) both infinite;
+  color: #fff;
+  text-shadow: 2px 2px var(--pixel-red, #ff2a2a), -2px -2px var(--pixel-blue, #00f2fe);
+}
+
+@keyframes glitch-skew {
+  0% { transform: translate(0) }
+  20% { transform: translate(-2px, 2px) }
+  40% { transform: translate(-2px, -2px) }
+  60% { transform: translate(2px, 2px) }
+  80% { transform: translate(2px, -2px) }
+  100% { transform: translate(0) }
+}
+
+/* =========================================
+   🌟 GIMMICK 3: PIXEL PROGRESS BAR (หลอดพลัง)
+   ========================================= */
+.accuracy-container {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.pixel-progress-bar {
+  width: 100px; /* ความยาวหลอด */
+  height: 12px;
+  background: #111;
+  border: 2px solid #444;
+  padding: 1px;
+}
+
+.pixel-progress-fill {
+  height: 100%;
+  background: var(--pixel-yellow, #fce83a);
+  /* แอนิเมชันตอนหลอดพลังวิ่ง */
+  transition: width 1.5s cubic-bezier(0.1, 0.9, 0.2, 1);
+  box-shadow: 0 0 5px rgba(252, 232, 58, 0.5);
+}
+
+/* =========================================
+   🌟 GIMMICK 4: HOLO-BADGE (แสงวิ่งผ่านเข็มกลัด)
+   ========================================= */
+.badge-item {
+  position: relative;
+  overflow: hidden; /* กั้นไม่ให้แสงทะลุขอบ */
+}
+
+/* สร้างแถบแสง */
+.badge-item::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -150%;
+  width: 50%;
+  height: 100%;
+  background: linear-gradient(to right, transparent, rgba(255,255,255,0.4), transparent);
+  transform: skewX(-25deg);
+  transition: all 0.5s ease;
+}
+
+/* สั่งให้แสงวิ่งตอนเอาเมาส์ชี้ */
+.badge-item:hover::before {
+  left: 150%;
+  transition: all 0.5s ease;
+}

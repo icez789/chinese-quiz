@@ -281,5 +281,56 @@ app.get('/api/auth/me', authenticateToken, async (req, res) => {
   }
 });
 
+// ---------- GET /api/profile (ดึงข้อมูลสถิติเชิงลึก) ----------
+app.get('/api/profile', authenticateToken, async (req, res) => {
+  const userId = req.user.id;
+
+  try {
+    // 1. ดึงสถิติพื้นฐาน
+    const [[stats]] = await pool.query(
+      'SELECT total_score, current_level FROM user_stats WHERE user_id = ?', 
+      [userId]
+    );
+
+    // 2. ดึงประวัติการเล่นล่าสุด (5 แมตช์ล่าสุด)
+    const [history] = await pool.query(`
+      SELECT sh.score, sh.total_questions, sh.played_at, 
+             IFNULL(c.name_th, 'ALL CATEGORIES') as category_name
+      FROM score_history sh
+      LEFT JOIN categories c ON sh.category_id = c.id
+      WHERE sh.user_id = ?
+      ORDER BY sh.played_at DESC LIMIT 5
+    `, [userId]);
+
+    // 3. คำนวณอัตราความแม่นยำ (Accuracy) จากประวัติทั้งหมด
+    const [[accData]] = await pool.query(`
+      SELECT SUM(score) as total_earned, SUM(total_questions) as total_q
+      FROM score_history WHERE user_id = ?
+    `, [userId]);
+
+    let accuracy = 0;
+    let totalGames = 0;
+    if (accData.total_q > 0) {
+      // ตีคะแนนฐานข้อละ 10 แต้ม (ไม่รวมโบนัสคอมโบ) 
+      const baseMaxScore = accData.total_q * 10;
+      accuracy = Math.round((accData.total_earned / baseMaxScore) * 100);
+      if (accuracy > 100) accuracy = 100; // ลิมิตไว้ที่ 100% ถ้ามีโบนัส
+      
+      const [[gameCount]] = await pool.query('SELECT COUNT(*) as count FROM score_history WHERE user_id = ?', [userId]);
+      totalGames = gameCount.count;
+    }
+
+    res.json({
+      stats: stats || { total_score: 0, current_level: 1 },
+      history,
+      accuracy,
+      totalGames
+    });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'โหลดข้อมูล Profile ไม่สำเร็จ' });
+  }
+});
+
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => console.log(`✅ Server running on port ${PORT}`));

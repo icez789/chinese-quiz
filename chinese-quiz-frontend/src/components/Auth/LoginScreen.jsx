@@ -1,6 +1,8 @@
-import React, { useState, useContext } from 'react';
+import React, { useState, useContext, useEffect } from 'react';
 import { AuthContext } from '../../AuthContext';
 import { playSound } from '../../SoundManager';
+// 🌟 ดึงเอฟเฟกต์ระเบิดมาใช้ (ปรับ path ให้ตรงกับไฟล์ของคุณด้วยนะ)
+import { triggerPixelBurst } from '../Home/PixelBurst'; 
 import './LoginScreen.css';
 
 export default function LoginScreen({ onLoginSuccess }) {
@@ -11,6 +13,17 @@ export default function LoginScreen({ onLoginSuccess }) {
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
+
+  // 🌟 เปิดระบบคลิกแล้วระเบิด + ปลุกเสียงให้ทำงานตั้งแต่หน้านี้เลย
+  useEffect(() => {
+    const handleGlobalClick = (e) => {
+      if (typeof triggerPixelBurst === 'function') triggerPixelBurst(e);
+      playSound('wakeup'); 
+    };
+    
+    window.addEventListener('click', handleGlobalClick);
+    return () => window.removeEventListener('click', handleGlobalClick);
+  }, []);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -34,22 +47,20 @@ export default function LoginScreen({ onLoginSuccess }) {
       }
 
       if (isRegister) {
-        // ถ้าสมัครเสร็จ สลับกลับไปหน้าล็อกอินพร้อมโชว์ข้อความสำเร็จ
         setIsRegister(false);
         setPassword('');
         setError('REGISTER SUCCESS! PLEASE LOGIN.');
-        playSound('levelup');
+        playSound('levelup'); // เสียงตอนสมัครผ่าน
       } else {
-        // ถ้าล็อกอินสำเร็จ เก็บ Token ลง Context แล้วบอก App.jsx ให้เปลี่ยนหน้า
         login(data.token, data.user);
-        playSound('start');
+        playSound('start'); // เสียงตอนเข้าเกมได้
         setTimeout(() => {
           onLoginSuccess();
         }, 500);
       }
     } catch (err) {
       setError(err.message);
-      playSound('wrong');
+      playSound('wrong'); // เสียงตอนพิมพ์รหัสผิด
     } finally {
       setLoading(false);
     }
@@ -57,24 +68,35 @@ export default function LoginScreen({ onLoginSuccess }) {
 
   const handleHover = () => playSound('tick');
 
-  const toggleMode = () => {
-    playSound('tick');
+  // 🌟 อัปเกรดฟังก์ชันสลับโหมดให้เสียงดังฟังชัดขึ้น
+  const toggleMode = (e) => {
+    e.preventDefault(); // กันฟอร์มเด้ง
+    playSound('click'); // เปลี่ยนจาก tick เป็น click จะได้ฟีลลิ่งปุ่มกด
     setIsRegister(!isRegister);
     setError('');
   };
 
+  // 🌟 กำหนดคลาส CSS ตามโหมด (Login = ฟ้า, Register = ชมพู)
+  const themeClass = isRegister ? 'theme-register' : 'theme-login';
+
   return (
     <div className="pixel-login-wrapper">
+      {/* เอฟเฟกต์เส้น CRT ทับจอ */}
       <div className="crt-scanlines"></div>
       
-      <div className="pixel-login-card">
-        <h1 className="pixel-login-title blink-fast">
+      {/* 🌟 กล่อง Card ที่เปลี่ยนสีได้ */}
+      <div className={`pixel-login-card ${themeClass}`}>
+        
+        {/* หัวข้อบังคับให้อยู่บรรทัดเดียว */}
+        <h1 className="pixel-login-title">
+          <span className="blink-fast">[ </span>
           {isRegister ? 'SYSTEM_REGISTER' : 'SYSTEM_LOGIN'}
+          <span className="blink-fast"> ]</span>
         </h1>
         
         <form onSubmit={handleSubmit} className="pixel-login-form">
           <div className="input-group">
-            <label>USERNAME:</label>
+            <label>_USERNAME:</label>
             <input 
               type="text" 
               value={username}
@@ -86,7 +108,7 @@ export default function LoginScreen({ onLoginSuccess }) {
           </div>
           
           <div className="input-group">
-            <label>PASSWORD:</label>
+            <label>_PASSWORD:</label>
             <input 
               type="password" 
               value={password}
@@ -98,7 +120,7 @@ export default function LoginScreen({ onLoginSuccess }) {
 
           {error && (
             <div className={`login-message ${error.includes('SUCCESS') ? 'text-green' : 'text-red'}`}>
-              [{error}]
+              <span className="blink-fast">⚠</span> {error}
             </div>
           )}
 
@@ -109,7 +131,7 @@ export default function LoginScreen({ onLoginSuccess }) {
               disabled={loading}
               onMouseEnter={handleHover}
             >
-              {loading ? 'PROCESSING...' : isRegister ? '[ REGISTER_ ]' : '[ ACCESS_ ]'}
+              {loading ? 'PROCESSING...' : isRegister ? '[ CREATE USER ]' : '[ ACCESS GRANTED ]'}
             </button>
             
             <button 
@@ -118,7 +140,7 @@ export default function LoginScreen({ onLoginSuccess }) {
               onClick={toggleMode}
               onMouseEnter={handleHover}
             >
-              {isRegister ? '< BACK TO LOGIN' : 'CREATE ACCOUNT >'}
+              {isRegister ? '<< BACK TO LOGIN' : 'CREATE ACCOUNT >>'}
             </button>
           </div>
         </form>

@@ -266,3 +266,57 @@
   transform: translate(4px, 4px);
   box-shadow: 0px 0px 0px transparent;
 }
+
+/* =========================================
+   🌟 INTERACTIVE BADGES & TOOLTIP
+   ========================================= */
+
+/* ทำให้ป้ายชี้ได้และมี Transition */
+.pixel-badge.interactive {
+  cursor: pointer;
+  transition: all 0.1s step-end;
+  position: relative;
+  user-select: none;
+}
+
+/* เอฟเฟกต์ตอนเอาเมาส์ไปชี้ */
+.pixel-badge.interactive:hover {
+  color: var(--pixel-blue, #00f2fe);
+  border: 1px solid var(--pixel-blue, #00f2fe);
+  background: rgba(0, 242, 254, 0.1);
+  transform: translateY(-2px);
+  box-shadow: 4px 4px 0px rgba(0, 242, 254, 0.2);
+}
+
+/* เอฟเฟกต์ตอนกดคลิก */
+.pixel-badge.interactive:active {
+  transform: translateY(2px);
+  box-shadow: 0px 0px 0px transparent;
+  background: var(--pixel-blue, #00f2fe);
+  color: #000;
+}
+
+/* กล่องข้อความอธิบายที่โผล่ขึ้นมา */
+.pixel-badge-info {
+  margin-top: 20px;
+  padding: 15px;
+  background: rgba(0, 242, 254, 0.05);
+  border-left: 4px solid var(--pixel-blue, #00f2fe);
+  color: #fff;
+  font-family: 'Sarabun', sans-serif; /* ใช้ฟอนต์ไทยให้อ่านง่าย */
+  font-size: 0.9rem;
+  line-height: 1.5;
+  text-shadow: 1px 1px 0px #000;
+  
+  /* แอนิเมชันเปิดตัวแบบพิมพ์ดีดหรือสแกน */
+  animation: scan-in 0.3s ease-out forwards;
+  opacity: 0;
+  transform: translateX(-10px);
+}
+
+@keyframes scan-in {
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
