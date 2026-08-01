@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import './ResultScreen.css';
+import { playSound } from '../../SoundManager'; // 🌟 1. ดึงระบบเสียงเข้ามา
 
 export default function ResultScreen({ result, onRetry, onHome, onSave }) {
   const [displayScore, setDisplayScore] = useState(0);
@@ -38,6 +39,25 @@ export default function ResultScreen({ result, onRetry, onHome, onSave }) {
     return () => clearInterval(timer);
   }, [score]);
 
+  // 🌟 2. ฟังก์ชันจัดการเสียงตอนชี้ปุ่ม
+  const handleHover = () => playSound('tick');
+
+  // 🌟 3. ฟังก์ชันจัดการเสียงและหน่วงเวลาตอนคลิก
+  const handleRetryClick = () => {
+    playSound('start'); // เสียงเริ่มเกม
+    setTimeout(() => onRetry(), 400);
+  };
+
+  const handleSaveClick = () => {
+    playSound('click'); // เสียงกดยืนยัน
+    setTimeout(() => onSave(), 400);
+  };
+
+  const handleHomeClick = () => {
+    playSound('click'); 
+    setTimeout(() => onHome(), 400);
+  };
+
   return (
     <div className="pixel-result-wrapper">
       {/* 🌌 ฉากหลังอวกาศและทีวี CRT */}
@@ -72,18 +92,17 @@ export default function ResultScreen({ result, onRetry, onHome, onSave }) {
 
         {/* ปุ่มกดสไตล์อาร์เคด */}
         <div className="pixel-result-actions">
-          <button className="pixel-action-btn btn-retry" onClick={onRetry}>
+          {/* 🌟 4. ใส่ Event เสียงเข้าไปในปุ่ม */}
+          <button className="pixel-action-btn btn-retry" onClick={handleRetryClick} onMouseEnter={handleHover}>
             [ INSERT COIN TO RETRY ]
           </button>
-          {/* 🌟 2. เพิ่มปุ่ม SAVE SCORE เข้าไปบนสุด (ใช้คลาส btn-retry สีเขียวให้เด่นๆ) */}
-          <button className="pixel-action-btn btn-retry" onClick={onSave}>
+          <button className="pixel-action-btn btn-retry" onClick={handleSaveClick} onMouseEnter={handleHover}>
             [ SAVE HIGH SCORE ]
           </button>
-          {/* ปุ่มเดิม (แอบเปลี่ยนสีปุ่ม Retry ให้เป็นสีฟ้า/เหลืองแทนจะได้ไม่แย่งซีน) */}
-          <button className="pixel-action-btn btn-home" onClick={onRetry}>
+          <button className="pixel-action-btn btn-home" onClick={handleRetryClick} onMouseEnter={handleHover}>
             [ PLAY AGAIN ]
           </button>
-          <button className="pixel-action-btn btn-home" onClick={onHome}>
+          <button className="pixel-action-btn btn-home" onClick={handleHomeClick} onMouseEnter={handleHover}>
             [ RETURN TO TITLE ]
           </button>
         </div>

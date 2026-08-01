@@ -59,17 +59,32 @@ export default function App() {
         />
       )}
 
-      {/* 🌟 แก้ไข: ดึงคะแนนจาก result (ป้องกันกรณี null ด้วย ?.) */}
       {screen === 'name-entry' && (
         <NameEntry 
           score={result?.score || 0} 
-          onSubmit={(name, score) => {
-            console.log(`เตรียมส่งชื่อ ${name} พร้อมคะแนน ${score} ขึ้น Backend!`);
-            
-            // TODO: โค้ดยิง API บันทึกลง Database
-            
-            // บันทึกเสร็จ เด้งไปหน้า Leaderboard
-            setScreen('leaderboard'); 
+          onSubmit={async (name, score) => {
+            try {
+              // 🌟 ยิง API บันทึกคะแนนเข้า TiDB
+              const res = await fetch('http://localhost:5000/api/score', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                  player_name: name,
+                  category_id: categoryId === 'all' ? 0 : categoryId,
+                  score: score,
+                  total_questions: result?.total || 10
+                }),
+              });
+              
+              if (!res.ok) throw new Error('บันทึกคะแนนไม่สำเร็จ');
+              
+              console.log('บันทึกข้อมูลลงฐานข้อมูลเรียบร้อย!');
+            } catch (err) {
+              console.error(err);
+            } finally {
+              // ไม่ว่าจะบันทึกสำเร็จหรือพัง ก็ให้เด้งไปหน้า Leaderboard
+              setScreen('leaderboard'); 
+            }
           }}
         />
       )}

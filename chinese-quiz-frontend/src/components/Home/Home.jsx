@@ -6,10 +6,13 @@ import { triggerPixelBurst } from './PixelBurst';
 export default function Home({ onStart, onLeaderboard }) {
   const handleHover = () => playSound('tick');
   
-  // 🌟 เปิดระบบคลิกแล้วระเบิด "ทุกที่บนหน้าจอ"
+  // 🌟 เปิดระบบคลิกแล้วระเบิด "ทุกที่บนหน้าจอ" + ปลุกระบบเสียง
   useEffect(() => {
     const handleGlobalClick = (e) => {
       triggerPixelBurst(e);
+      // 🔊 ทริคปลดล็อก: สั่งเล่นเสียงที่ไม่มีอยู่จริง (เช่น 'wakeup') 
+      // เพื่อบังคับให้เบราว์เซอร์เปิดใช้งาน AudioContext ทันทีที่ผู้เล่นคลิกจอครั้งแรก
+      playSound('wakeup'); 
     };
     
     window.addEventListener('click', handleGlobalClick);
@@ -26,7 +29,7 @@ export default function Home({ onStart, onLeaderboard }) {
 
   // 🌟 ฟังก์ชันสำหรับปุ่ม Leaderboard
   const handleLeaderboardClick = () => {
-    playSound('start'); 
+    playSound('click'); // เปลี่ยน Leaderboard เป็นเสียง click ธรรมดาจะได้ต่างกับปุ่ม Start
     setTimeout(() => {
       onLeaderboard();
     }, 400); 

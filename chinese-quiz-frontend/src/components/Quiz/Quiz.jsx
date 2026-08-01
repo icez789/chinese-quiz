@@ -3,12 +3,12 @@ import QuestionCard from './QuestionCard';
 import ScoreBar from './ScoreBar';
 import TimerBar from './TimerBar';
 import { playSound } from "../../SoundManager";
-import { triggerPixelBurst } from '../Home/PixelBurst'; // 💥 ดึงเอฟเฟกต์ระเบิดมาใช้ (เช็ค Path ให้ตรงด้วยนะครับ)
+import { triggerPixelBurst } from '../Home/PixelBurst'; 
 import './Quiz.css';
 
 const API_BASE = 'http://localhost:5000';
 
-export default function Quiz({ userId, categoryId, level, onFinish }) {
+export default function Quiz({ categoryId, level, onFinish }) {
   const [questions, setQuestions] = useState([]);
   const [current, setCurrent] = useState(0);
   const [score, setScore] = useState(0);
@@ -39,8 +39,7 @@ export default function Quiz({ userId, categoryId, level, onFinish }) {
       });
   }, [categoryId, level]); 
 
-  // 🌟 เพิ่มรับค่า e เข้ามา เพื่อให้รู้พิกัดเมาส์ตอนระเบิด
- const handleAnswer = useCallback(
+  const handleAnswer = useCallback(
     (choiceIndex, e) => {
       if (selected !== null) return; 
       if (e) triggerPixelBurst(e);
@@ -52,15 +51,17 @@ export default function Quiz({ userId, categoryId, level, onFinish }) {
       setFeedback(isCorrect ? 'correct' : 'wrong');
       playSound(isCorrect ? 'correct' : 'wrong');
 
-      let currentLives = lives; // 🌟 เก็บค่าเลือดปัจจุบันไว้ใช้ตรวจสอบ
+      let currentLives = lives; 
+
+      // 🌟 คำนวณคะแนนที่จะได้ (ใส่ let ไว้เพื่อให้ใช้ใน logic จบเกมได้)
+      let earnedScore = 0;
 
       if (isCorrect) {
-        const bonus = combo >= 3 ? 15 : 10; 
-        setScore((s) => s + bonus);
+        earnedScore = combo >= 3 ? 15 : 10; 
+        setScore((s) => s + earnedScore);
         setCombo((c) => c + 1);
       } else {
         setCombo(0);
-        // 🌟 2. หักเลือด 1 ดวง
         currentLives = lives - 1;
         setLives(currentLives);
       }
@@ -69,43 +70,30 @@ export default function Quiz({ userId, categoryId, level, onFinish }) {
         setSelected(null);
         setFeedback(null);
         
-        // 🌟 3. เช็คว่าเลือดหมดหรือยัง?
         if (currentLives <= 0) {
-          finishQuiz(); // เลือดหมด ตาย! (Game Over)
+          // เลือดหมด ตาย! ส่งคะแนนที่คำนวณล่าสุดไปเลย
+          finishQuiz(score + earnedScore); 
         } else if (current + 1 < questions.length) {
-          setCurrent((c) => c + 1); // ไปข้อต่อไป
+          setCurrent((c) => c + 1); 
         } else {
-          finishQuiz(); // ตอบครบทุกข้อแล้ว (Win)
+          // ตอบครบทุกข้อแล้ว ส่งคะแนนไปเลย
+          finishQuiz(score + earnedScore); 
         }
       }, 1000); 
     },
-    // 🌟 4. อย่าลืมเพิ่ม lives เข้าไปใน Array ด้านล่างนี้ด้วยครับ!
-    [current, questions, selected, combo, lives] 
+    [current, questions, selected, combo, lives, score] 
   );
 
-  const finishQuiz = async () => {
+  // 🌟 ปรับปรุงใหม่: ไม่ต้องยิง API แล้ว แค่ส่งคะแนนกลับไปให้ App.jsx
+  const finishQuiz = (finalScore) => {
     playSound('finish');
-    try {
-      const res = await fetch(`${API_BASE}/api/score`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          user_id: userId,
-          category_id: categoryId === 'all' ? 0 : categoryId,
-          score,
-          total_questions: questions.length,
-          
-        }),
-      });
-      const result = await res.json();
-      onFinish({ score, total: questions.length, ...result });
-    } catch (err) {
-      console.error('บันทึกคะแนนไม่สำเร็จ', err);
-      onFinish({ score, total: questions.length });
-    }
+    // ส่งข้อมูลเพียวๆ ไปรอไว้ที่หน้า Result
+    onFinish({ 
+      score: finalScore, 
+      total: questions.length * 10 // คะแนนเต็มสมมติฐานที่ข้อละ 10
+    });
   };
 
-  // 🌟 เปลี่ยนหน้า Loading ให้เป็นแบบ 8-bit
   if (loading) return (
     <div className="pixel-loading-container">
       <div className="pixel-text">LOADING_DATA<span className="blink">_</span></div>
@@ -119,7 +107,6 @@ export default function Quiz({ userId, categoryId, level, onFinish }) {
 
   return (
     <div className="pixel-quiz-wrapper">
-      {/* 🌌 ฉากหลังอวกาศ และ CRT */}
       <div className="pixel-starfield stars-slow"></div>
       <div className="pixel-starfield stars-medium"></div>
       <div className="pixel-starfield stars-fast"></div>
@@ -131,14 +118,14 @@ export default function Quiz({ userId, categoryId, level, onFinish }) {
           combo={combo}
           current={current + 1}
           total={questions.length}
-          lives={lives} // 🌟 5. ส่งค่าเลือดไปให้แถบคะแนน
+          lives={lives} 
         />
         
         <TimerBar 
           key={current} 
           timeLimit={10} 
           isPaused={selected !== null} 
-          onTimeUp={() => handleAnswer(-1, null)} // ส่ง null แทน e เพื่อบอกว่าไม่ได้เกิดจากการคลิก
+          onTimeUp={() => handleAnswer(-1, null)} 
         />
 
         <QuestionCard
