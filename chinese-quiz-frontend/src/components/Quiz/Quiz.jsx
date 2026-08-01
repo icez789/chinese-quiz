@@ -6,7 +6,7 @@ import { playSound } from "../../SoundManager";
 import { triggerPixelBurst } from '../Home/PixelBurst'; 
 import './Quiz.css';
 
-const API_BASE = 'http://localhost:5000';
+const API_BASE = '';
 
 export default function Quiz({ categoryId, level, onFinish }) {
   const [questions, setQuestions] = useState([]);

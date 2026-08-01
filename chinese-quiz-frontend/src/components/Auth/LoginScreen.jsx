@@ -34,7 +34,7 @@ export default function LoginScreen({ onLoginSuccess }) {
     const endpoint = isRegister ? '/api/auth/register' : '/api/auth/login';
     
     try {
-      const res = await fetch(`http://localhost:5000${endpoint}`, {
+      const res = await fetch(`${endpoint}`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ username, password })

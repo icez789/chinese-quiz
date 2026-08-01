@@ -11,7 +11,7 @@ export default function Profile({ onBack }) {
   useEffect(() => {
     const fetchProfile = async () => {
       try {
-        const res = await fetch('http://localhost:5000/api/profile', {
+        const res = await fetch('/api/profile', {
           headers: { 'Authorization': `Bearer ${token}` }
         });
         if (res.ok) {

@@ -38,7 +38,7 @@ export default function CategoryMenu({ onSelect, onBack }) {
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    fetch('http://localhost:5000/api/categories')
+    fetch('/api/categories')
       .then((res) => {
         if (!res.ok) throw new Error('เชื่อมต่อเซิร์ฟเวอร์ไม่ได้');
         return res.json();

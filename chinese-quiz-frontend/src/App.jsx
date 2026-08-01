@@ -36,7 +36,7 @@ export default function App() {
   // 🌟 6. ฟังก์ชันบันทึกคะแนนฉบับใหม่ (แนบ Token ยิงตรงเข้า Database เลย)
   const handleSaveScore = async () => {
     try {
-      const res = await fetch('http://localhost:5000/api/score', {
+      const res = await fetch('/api/score', {
         method: 'POST',
         headers: { 
           'Content-Type': 'application/json',

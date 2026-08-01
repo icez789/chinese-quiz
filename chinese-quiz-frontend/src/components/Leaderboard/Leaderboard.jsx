@@ -10,7 +10,7 @@ export default function Leaderboard({ onHome }) {
   useEffect(() => {
     const fetchLeaderboard = async () => {
       try {
-        const res = await fetch('http://localhost:5000/api/leaderboard');
+        const res = await fetch('/api/leaderboard');
         if (!res.ok) throw new Error('ดึงข้อมูล Leaderboard ไม่สำเร็จ');
         
         const data = await res.json();
