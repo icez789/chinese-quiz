@@ -506,3 +506,32 @@
   0% { background-position: 0 0; }
   100% { background-position: 0 400px; } /* เลื่อนลงมาเท่ากับขนาดพื้นหลัง เพื่อให้มันลูปเนียนๆ */
 }
+
+/* =========================================
+   🔥 HELL MODE BUTTON
+   ========================================= */
+.pixel-card.pixel-hell {
+  border-color: #ff2a2a;
+  box-shadow: 6px 6px 0px #ff2a2a;
+}
+
+/* 🌟 แก้สีตัวหนังสือให้อ่านออกชัดเจน */
+.pixel-card.pixel-hell .pixel-name {
+  color: #ffde00; /* เปลี่ยนเป็นสีเหลืองไฟสว่างๆ */
+  text-shadow: 3px 3px 0px #ff2a2a, -1px -1px 0px #990000; /* เงาสีแดงซ้อนกันให้ดูมีมิติ */
+  letter-spacing: 2px;
+  font-weight: 900;
+}
+
+.pixel-card.pixel-hell:hover {
+  background: #ff2a2a;
+  color: #000;
+  border-color: #ff2a2a;
+  box-shadow: 6px 6px 0px #fff;
+}
+
+/* 🌟 ตอนเอาเมาส์ชี้ให้กลับมาเป็นสีดำ จะได้ตัดกับพื้นหลังสีแดง */
+.pixel-card.pixel-hell:hover .pixel-name {
+  color: #000;
+  text-shadow: none;
+}

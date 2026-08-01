@@ -3,13 +3,88 @@ import cors from 'cors';
 import pool from './db.js';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
+import http from 'http'; 
+import { Server } from 'socket.io'; 
 
 const app = express();
 app.use(cors());
 app.use(express.json());
 
-// 🌟 ตัวแปรลับสำหรับสร้าง Token (ของจริงควรเอาไปใส่ในไฟล์ .env เช่น JWT_SECRET=your_secret_key)
+// 🌟 สร้าง HTTP Server และเอา Socket.io มาครอบไว้
+const server = http.createServer(app);
+const io = new Server(server, {
+  cors: {
+    origin: "*", 
+    methods: ["GET", "POST"]
+  }
+});
+
+// 🌟 ตัวแปรลับสำหรับสร้าง Token
 const JWT_SECRET = process.env.JWT_SECRET || '8bit-arcade-super-secret-key';
+
+// ==========================================
+// 🎮 SOCKET.IO: ระบบห้องเรียนเรียลไทม์ (Multiplayer)
+// ==========================================
+
+// ตัวแปรสำหรับเก็บข้อมูลห้องเรียนในหน่วยความจำชั่วคราว
+const activeRooms = {}; 
+
+io.on('connection', (socket) => {
+  console.log(`[SOCKET] สายลับเชื่อมต่อเข้ามาแล้ว: ${socket.id}`);
+
+  // 1. ครู/ผู้คุมสอบ สั่งสร้างห้อง
+  socket.on('createRoom', ({ categoryId }) => {
+    // สุ่มรหัส PIN 6 หลัก
+    const pin = Math.floor(100000 + Math.random() * 900000).toString();
+    
+    // บันทึกข้อมูลห้อง
+    activeRooms[pin] = {
+      host: socket.id,
+      categoryId: categoryId,
+      players: []
+    };
+    
+    socket.join(pin); // ให้ครูเข้าไปรอในห้องตัวเอง
+    socket.emit('roomCreated', { pin });
+    console.log(`[ROOM] สร้างห้องสำเร็จ PIN: ${pin} (หมวดหมู่: ${categoryId})`);
+  });
+
+  // 2. นักเรียน กรอก PIN เพื่อเข้าห้อง
+  socket.on('joinRoom', ({ pin, username }) => {
+    const room = activeRooms[pin];
+    
+    if (room) {
+      // ถ้ารหัสถูก ให้สร้างตัวละครนักเรียน
+      const player = { id: socket.id, username, score: 0 };
+      room.players.push(player);
+      socket.join(pin); // ดึงนักเรียนเข้าห้อง
+      
+      // ส่งสัญญาณกลับไปบอกนักเรียนว่าเข้าห้องสำเร็จแล้ว
+      socket.emit('joinSuccess', { pin, categoryId: room.categoryId });
+      
+      // ส่งรายชื่ออัปเดตไปบอกครูที่หน้าจอหลัก
+      io.to(room.host).emit('playerJoined', room.players);
+      
+      console.log(`[ROOM] ผู้เล่น ${username} เข้าร่วมห้อง ${pin}`);
+    } else {
+      // ถ้ารหัสผิด ส่งข้อความแจ้งเตือนกลับไป
+      socket.emit('joinError', 'ไม่พบรหัสห้องนี้ หรือห้องถูกปิดไปแล้ว!');
+    }
+  });
+
+  // 3. เมื่อมีคนหลุดหรือปิดเว็บ
+  socket.on('disconnect', () => {
+    console.log(`[SOCKET] สายลับตัดการเชื่อมต่อ: ${socket.id}`);
+  });
+
+  // 4. เมื่อครู (Host) สั่งเริ่มเกม
+  socket.on('startGame', ({ pin, questions }) => {
+    console.log(`[ROOM] ผู้บัญชาการสั่งลุย! ห้อง ${pin} เริ่มเกมแล้ว`);
+    io.to(pin).emit('missionStarted', questions);
+  });
+
+});
+
 
 // ==========================================
 // 🔐 ระบบ AUTHENTICATION (Login / Register)
@@ -25,23 +100,19 @@ app.post('/api/auth/register', async (req, res) => {
 
   const conn = await pool.getConnection();
   try {
-    // 1. เช็คว่ามีชื่อนี้ในระบบหรือยัง?
     const [existingUsers] = await conn.query('SELECT id FROM users WHERE username = ?', [username]);
     if (existingUsers.length > 0) {
       return res.status(400).json({ error: 'ชื่อนี้มีคนใช้แล้ว! กรุณาใช้ชื่ออื่น' });
     }
 
-    // 2. เข้ารหัสผ่าน (Hashing)
     const salt = await bcrypt.genSalt(10);
     const hashedPassword = await bcrypt.hash(password, salt);
 
-    // 3. บันทึกลง Database
     const [insertResult] = await conn.query(
       'INSERT INTO users (username, password, role) VALUES (?, ?, ?)',
       [username, hashedPassword, 'player']
     );
 
-    // สร้างข้อมูลสถิติเริ่มต้นให้ User ใหม่ทันที
     await conn.query(
       'INSERT INTO user_stats (user_id, total_score, current_level) VALUES (?, 0, 1)',
       [insertResult.insertId]
@@ -65,28 +136,23 @@ app.post('/api/auth/login', async (req, res) => {
   }
 
   try {
-    // 1. ค้นหา User จากชื่อ
     const [users] = await pool.query('SELECT * FROM users WHERE username = ?', [username]);
     if (users.length === 0) {
       return res.status(401).json({ error: 'ไม่พบชื่อผู้ใช้นี้ในระบบ' });
     }
 
     const user = users[0];
-
-    // 2. ตรวจสอบรหัสผ่าน
     const isMatch = await bcrypt.compare(password, user.password);
     if (!isMatch) {
       return res.status(401).json({ error: 'รหัสผ่านไม่ถูกต้อง!' });
     }
 
-    // 3. สร้างบัตรผ่าน (JWT Token) ให้มีอายุ 24 ชั่วโมง
     const token = jwt.sign(
       { id: user.id, username: user.username, role: user.role },
       JWT_SECRET,
       { expiresIn: '24h' }
     );
 
-    // ส่ง Token และข้อมูลเบื้องต้นกลับไปให้ Frontend
     res.json({
       success: true,
       token,
@@ -164,25 +230,22 @@ app.get('/api/words', async (req, res) => {
 // 🛡️ MIDDLEWARE: ด่านตรวจบัตร (Token)
 // ==========================================
 const authenticateToken = (req, res, next) => {
-  // ดึง Token มาจาก Header ที่ Frontend จะส่งมาให้
   const authHeader = req.headers['authorization'];
-  const token = authHeader && authHeader.split(' ')[1]; // รูปแบบ: "Bearer <token>"
+  const token = authHeader && authHeader.split(' ')[1];
 
   if (!token) return res.status(401).json({ error: 'ACCESS DENIED: กรุณาล็อกอินก่อน' });
 
   jwt.verify(token, JWT_SECRET, (err, user) => {
     if (err) return res.status(403).json({ error: 'TOKEN EXPIRED: บัตรผ่านหมดอายุหรือแอบอ้าง' });
-    req.user = user; // ฝากข้อมูล user (id, username, role) ไว้ใน req
-    next(); // ปล่อยผ่านไปทำงานต่อได้
+    req.user = user; 
+    next(); 
   });
 };
 
-// ---------- POST /api/score (อัปเดตใหม่: ต้องใช้ Token) ----------
-// สังเกตว่าเราแทรก `authenticateToken` ไว้ตรงกลาง
+// ---------- POST /api/score ----------
 app.post('/api/score', authenticateToken, async (req, res) => {
   const { category_id, score, total_questions } = req.body;
   
-  // 🌟 ไม่ต้องรับ player_name จากหน้าบ้านแล้ว! เราดึง ID จากบัตรผ่าน (Token) ได้เลย
   const userId = req.user.id; 
   const username = req.user.username; 
 
@@ -190,7 +253,6 @@ app.post('/api/score', authenticateToken, async (req, res) => {
     return res.status(400).json({ error: 'ข้อมูลไม่ครบ' });
   }
 
-  // 🛡️ ANTI-CHEAT: Sanity Check (คงไว้เหมือนเดิม เยี่ยมมากครับ!)
   const maxPossibleScore = Number(total_questions) * 15;
   if (Number(score) < 0 || Number(score) > maxPossibleScore) {
     console.warn(`🚨 [ANTI-CHEAT] สกัดการแฮ็กจาก: ${username} (ยิงมา: ${score}, ลิมิต: ${maxPossibleScore})`);
@@ -201,14 +263,14 @@ app.post('/api/score', authenticateToken, async (req, res) => {
   try {
     await conn.beginTransaction();
 
-    // 🌟 1. บันทึกประวัติการเล่น (ไม่ต้องเช็ค/สร้าง User ใหม่แล้ว เพราะล็อกอินมาแล้วชัวร์ๆ)
+    // 🌟 ดักค่า 0 ให้กลายเป็น null ก่อนบันทึกลง Database
+    
     await conn.query(
       `INSERT INTO score_history (user_id, category_id, score, total_questions, played_at)
        VALUES (?, ?, ?, ?, NOW())`,
-      [userId, category_id, score, total_questions]
+      [userId, category_id, score, total_questions] // ✅ ใช้ category_id ส่งเลข 0 ไปตรงๆ เลย
     );
 
-    // 🌟 2. อัปเดตคะแนนรวมสะสม
     await conn.query(
       `INSERT INTO user_stats (user_id, total_score, current_level)
        VALUES (?, ?, 1)
@@ -216,7 +278,6 @@ app.post('/api/score', authenticateToken, async (req, res) => {
       [userId, score]
     );
 
-    // 🌟 3. อัปเดตเลเวล
     const [[stats]] = await conn.query(
       'SELECT total_score FROM user_stats WHERE user_id = ?',
       [userId]
@@ -256,13 +317,11 @@ app.get('/api/leaderboard', async (req, res) => {
   }
 });
 
-// ---------- GET /api/auth/me (เช็คข้อมูลผู้ใช้ปัจจุบัน) ----------
-// ใช้ Middleware authenticateToken เพื่อดึงข้อมูลเฉพาะของคนที่ล็อกอินอยู่
+// ---------- GET /api/auth/me ----------
 app.get('/api/auth/me', authenticateToken, async (req, res) => {
   const userId = req.user.id;
 
   try {
-    // ดึงข้อมูลพื้นฐานและสถิติจากฐานข้อมูล
     const [rows] = await pool.query(`
       SELECT u.id, u.username, u.role, us.total_score, us.current_level
       FROM users u
@@ -281,28 +340,26 @@ app.get('/api/auth/me', authenticateToken, async (req, res) => {
   }
 });
 
-// ---------- GET /api/profile (ดึงข้อมูลสถิติเชิงลึก) ----------
+// ---------- GET /api/profile ----------
 app.get('/api/profile', authenticateToken, async (req, res) => {
   const userId = req.user.id;
 
   try {
-    // 1. ดึงสถิติพื้นฐาน
     const [[stats]] = await pool.query(
       'SELECT total_score, current_level FROM user_stats WHERE user_id = ?', 
       [userId]
     );
 
-    // 2. ดึงประวัติการเล่นล่าสุด (5 แมตช์ล่าสุด)
+    // 🌟 ดึงข้อมูลประวัติ และแปลงค่า NULL เป็นชื่อโหมดสุ่มมั่ว / HELL MODE
     const [history] = await pool.query(`
       SELECT sh.score, sh.total_questions, sh.played_at, 
-             IFNULL(c.name_th, 'ALL CATEGORIES') as category_name
+             IFNULL(c.name_th, 'สุ่มมั่ว / HELL MODE') as category_name
       FROM score_history sh
       LEFT JOIN categories c ON sh.category_id = c.id
       WHERE sh.user_id = ?
       ORDER BY sh.played_at DESC LIMIT 5
     `, [userId]);
 
-    // 3. คำนวณอัตราความแม่นยำ (Accuracy) จากประวัติทั้งหมด
     const [[accData]] = await pool.query(`
       SELECT SUM(score) as total_earned, SUM(total_questions) as total_q
       FROM score_history WHERE user_id = ?
@@ -311,10 +368,9 @@ app.get('/api/profile', authenticateToken, async (req, res) => {
     let accuracy = 0;
     let totalGames = 0;
     if (accData.total_q > 0) {
-      // ตีคะแนนฐานข้อละ 10 แต้ม (ไม่รวมโบนัสคอมโบ) 
       const baseMaxScore = accData.total_q * 10;
       accuracy = Math.round((accData.total_earned / baseMaxScore) * 100);
-      if (accuracy > 100) accuracy = 100; // ลิมิตไว้ที่ 100% ถ้ามีโบนัส
+      if (accuracy > 100) accuracy = 100;
       
       const [[gameCount]] = await pool.query('SELECT COUNT(*) as count FROM score_history WHERE user_id = ?', [userId]);
       totalGames = gameCount.count;
@@ -333,4 +389,8 @@ app.get('/api/profile', authenticateToken, async (req, res) => {
 });
 
 const PORT = process.env.PORT || 5000;
-app.listen(PORT, () => console.log(`✅ Server running on port ${PORT}`));
+
+// 🚨 สำคัญมาก: เปลี่ยนจาก app.listen เป็น server.listen 
+server.listen(PORT, () => {
+  console.log(`✅ Server & Socket.io running on port ${PORT}`);
+});

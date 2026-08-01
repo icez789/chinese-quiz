@@ -3,7 +3,7 @@ import './Home.css';
 import { playSound } from '../../SoundManager';
 import { triggerPixelBurst } from './PixelBurst'; 
 
-export default function Home({ onStart, onLeaderboard }) {
+export default function Home({ onStart, onLeaderboard, onMultiplayer }) { // 🌟 รับ onMultiplayer มาด้วย
   // 🌟 2. เพิ่ม State สำหรับเก็บข้อความอธิบายตอนคลิกป้าย
   const [badgeInfo, setBadgeInfo] = useState('');
 
@@ -46,6 +46,14 @@ export default function Home({ onStart, onLeaderboard }) {
     playSound('click'); 
     setTimeout(() => {
       onLeaderboard();
+    }, 400); 
+  };
+
+  const handleMultiplayerClick = (e) => {
+    e.stopPropagation();
+    playSound('start'); // หรือจะใช้เสียง click ก็ได้
+    setTimeout(() => {
+      onMultiplayer();
     }, 400); 
   };
 
@@ -118,6 +126,8 @@ export default function Home({ onStart, onLeaderboard }) {
             >
               [ INSERT COIN TO START ]
             </button>
+
+           
             
             <button 
               className="pixel-secondary-btn" 

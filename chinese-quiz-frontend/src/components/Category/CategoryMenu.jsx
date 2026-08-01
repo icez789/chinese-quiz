@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { playSound } from '../../SoundManager';
 import './CategoryMenu.css';
 
-// ... (ส่วน ICON_RULES และ getCategoryIcon เหมือนเดิม) ...
+// 🌟 อัปเดต ICON_RULES เพิ่มคำค้นหาให้ครอบคลุมหมวดหมู่พื้นฐานทั้งหมด
 const ICON_RULES = [
   { keywords: ['ผลไม้'], icon: '🍎' },
   { keywords: ['ผัก'], icon: '🥬' },
@@ -11,19 +11,22 @@ const ICON_RULES = [
   { keywords: ['อาหาร'], icon: '🍜' },
   { keywords: ['เครื่องดื่ม'], icon: '🥤' },
   { keywords: ['สี'], icon: '🎨' },
-  { keywords: ['ร่างกาย'], icon: '🧍' },
+  { keywords: ['ร่างกาย', 'อวัยวะ'], icon: '🧍' },
   { keywords: ['อาชีพ'], icon: '💼' },
   { keywords: ['สถานที่'], icon: '📍' },
-  { keywords: ['ของใช้ในบ้าน', 'บ้าน'], icon: '🏠' },
-  { keywords: ['ครอบครัว'], icon: '👨‍👩‍👧' },
-  { keywords: ['เสื้อผ้า'], icon: '👕' },
+  { keywords: ['ของใช้ในบ้าน', 'บ้าน', 'สิ่งของ'], icon: '🏠' },
+  { keywords: ['ครอบครัว', 'ญาติ'], icon: '👨‍👩‍👧' },
+  { keywords: ['เสื้อผ้า', 'เครื่องแต่งกาย'], icon: '👕' },
   { keywords: ['กีฬา'], icon: '⚽' },
-  { keywords: ['ดนตรี', 'เพลง'], icon: '🎵' },
+  { keywords: ['ดนตรี', 'เพลง', 'เครื่องดนตรี'], icon: '🎵' },
   { keywords: ['ตัวเลข', 'เลข'], icon: '🔢' },
-  { keywords: ['เวลา'], icon: '⏰' },
-  { keywords: ['สภาพอากาศ', 'อากาศ'], icon: '☀️' },
-  { keywords: ['โรงเรียน', 'การศึกษา'], icon: '🏫' },
-  { keywords: ['เทคโนโลยี'], icon: '💻' },
+  { keywords: ['เวลา', 'วัน', 'เดือน', 'ฤดู'], icon: '⏰' },
+  { keywords: ['สภาพอากาศ', 'อากาศ', 'ธรรมชาติ'], icon: '☀️' },
+  { keywords: ['โรงเรียน', 'การศึกษา', 'เครื่องเขียน'], icon: '🏫' },
+  { keywords: ['เทคโนโลยี', 'ไอที'], icon: '💻' },
+  { keywords: ['กริยา', 'การกระทำ'], icon: '🏃' },
+  { keywords: ['ความรู้สึก', 'อารมณ์'], icon: '❤️' },
+  { keywords: ['ทิศทาง', 'ตำแหน่ง'], icon: '🧭' },
 ];
 const DEFAULT_ICON = '📚';
 
@@ -87,6 +90,8 @@ export default function CategoryMenu({ onSelect, onBack }) {
         {error && <div className="pixel-error">ERR: {error}</div>}
 
         <div className="pixel-grid">
+          
+          {/* 🔀 ปุ่มสุ่มมั่วทั้งหมด */}
           <button
             onClick={() => handleClick('all')}
             onMouseEnter={handleHover}
@@ -96,7 +101,20 @@ export default function CategoryMenu({ onSelect, onBack }) {
             <span className="pixel-name">สุ่มมั่วทั้งหมด</span>
           </button>
 
-          {categories.map((cat) => (
+          {/* 🔥 ปุ่ม HELL MODE */}
+          <button
+            onClick={() => handleClick('hell')}
+            onMouseEnter={handleHover}
+            className="pixel-card pixel-hell"
+          >
+            <span className="pixel-icon">🔥</span>
+            <span className="pixel-name">นรกแตก</span>
+          </button>
+
+          {/* 📚 หมวดหมู่ที่ดึงมาจาก Database */}
+          {categories
+            .filter((cat) => cat.id !== 0) /* 🌟 จุดแก้ไข: กรองเอา ID 0 ทิ้งไป ไม่ให้มาโชว์ซ้ำ! */
+            .map((cat) => (
             <button
               key={cat.id}
               onClick={() => handleClick(cat.id)}

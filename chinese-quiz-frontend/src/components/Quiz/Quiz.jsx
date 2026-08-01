@@ -9,6 +9,10 @@ import './Quiz.css';
 const API_BASE = '';
 
 export default function Quiz({ categoryId, level, onFinish }) {
+  // 🌟 ตั้งค่าความโหด: ถ้า level 3 (Hell Mode) ให้เวลา 5 วิ หัวใจ 3 ดวง / โหมดปกติ 10 วิ หัวใจ 7 ดวง
+  const MAX_TIME = level === 3 ? 5 : 10;
+  const STARTING_LIVES = level === 3 ? 3 : 7;
+
   const [questions, setQuestions] = useState([]);
   const [current, setCurrent] = useState(0);
   const [score, setScore] = useState(0);
@@ -16,11 +20,14 @@ export default function Quiz({ categoryId, level, onFinish }) {
   const [loading, setLoading] = useState(true);
   const [selected, setSelected] = useState(null);
   const [feedback, setFeedback] = useState(null); 
-  const [lives, setLives] = useState(7);
+  
+  // 🌟 ให้หัวใจเริ่มต้นตามโหมดที่เล่น
+  const [lives, setLives] = useState(STARTING_LIVES);
 
   useEffect(() => {
-    let fetchUrl = `${API_BASE}/api/words?level=${level}&limit=10`;
-    if (categoryId !== 'all') {
+    // 🌟 บังคับดึงคำศัพท์ level=1 เสมอ ตามที่มีใน Database!
+    let fetchUrl = `${API_BASE}/api/words?level=1&limit=10`;
+    if (categoryId !== 'all' && categoryId !== 0) {
       fetchUrl += `&category_id=${categoryId}`;
     }
 
@@ -37,7 +44,7 @@ export default function Quiz({ categoryId, level, onFinish }) {
         console.error('โหลดคำถามไม่สำเร็จ', err);
         setLoading(false);
       });
-  }, [categoryId, level]); 
+  }, [categoryId]); // เอา level ออกจากตรงนี้เพราะเราฟิกซ์ดึงแต่ level=1 เสมอ
 
   const handleAnswer = useCallback(
     (choiceIndex, e) => {
@@ -52,8 +59,6 @@ export default function Quiz({ categoryId, level, onFinish }) {
       playSound(isCorrect ? 'correct' : 'wrong');
 
       let currentLives = lives; 
-
-      // 🌟 คำนวณคะแนนที่จะได้ (ใส่ let ไว้เพื่อให้ใช้ใน logic จบเกมได้)
       let earnedScore = 0;
 
       if (isCorrect) {
@@ -71,12 +76,10 @@ export default function Quiz({ categoryId, level, onFinish }) {
         setFeedback(null);
         
         if (currentLives <= 0) {
-          // เลือดหมด ตาย! ส่งคะแนนที่คำนวณล่าสุดไปเลย
           finishQuiz(score + earnedScore); 
         } else if (current + 1 < questions.length) {
           setCurrent((c) => c + 1); 
         } else {
-          // ตอบครบทุกข้อแล้ว ส่งคะแนนไปเลย
           finishQuiz(score + earnedScore); 
         }
       }, 1000); 
@@ -84,13 +87,11 @@ export default function Quiz({ categoryId, level, onFinish }) {
     [current, questions, selected, combo, lives, score] 
   );
 
-  // 🌟 ปรับปรุงใหม่: ไม่ต้องยิง API แล้ว แค่ส่งคะแนนกลับไปให้ App.jsx
   const finishQuiz = (finalScore) => {
     playSound('finish');
-    // ส่งข้อมูลเพียวๆ ไปรอไว้ที่หน้า Result
     onFinish({ 
       score: finalScore, 
-      total: questions.length * 10 // คะแนนเต็มสมมติฐานที่ข้อละ 10
+      total: questions.length * 10 
     });
   };
 
@@ -119,11 +120,12 @@ export default function Quiz({ categoryId, level, onFinish }) {
           current={current + 1}
           total={questions.length}
           lives={lives} 
+          maxLives={STARTING_LIVES} // 🌟 แอบส่งจำนวนหัวใจสูงสุดไปให้ ScoreBar เผื่อนำไปใช้
         />
         
         <TimerBar 
           key={current} 
-          timeLimit={10} 
+          timeLimit={MAX_TIME} // 🌟 เปลี่ยนเวลาจำกัดให้ตรงกับโหมด (5 หรือ 10)
           isPaused={selected !== null} 
           onTimeUp={() => handleAnswer(-1, null)} 
         />

@@ -5,8 +5,13 @@ export default defineConfig({
   plugins: [react()],
   server: {
     proxy: {
-      // 🌟 บอก Vite ว่า: ถ้ามีใครเรียก API ที่ขึ้นต้นด้วย /api ให้โยนไปหา Backend ที่พอร์ต 5000 นะ!
-      '/api': 'http://localhost:5000'
+      '/api': 'http://localhost:5000',
+      
+      // 🌟 เพิ่มบล็อกนี้เข้าไป เพื่อให้ Proxy ยอมให้ Socket.io วิ่งผ่านได้!
+      '/socket.io': {
+        target: 'http://localhost:5000',
+        ws: true // ws = WebSocket (เปิดท่อ Real-time)
+      }
     }
   }
 })

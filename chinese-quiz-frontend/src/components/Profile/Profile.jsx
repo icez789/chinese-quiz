@@ -26,7 +26,7 @@ export default function Profile({ onBack }) {
     };
     
     fetchProfile();
-    playSound('wakeup'); // ปลุกเสียง
+    playSound('wakeup'); 
   }, [token]);
 
   const handleBackClick = () => {
@@ -36,7 +36,6 @@ export default function Profile({ onBack }) {
 
   const handleHover = () => playSound('tick');
 
-  // 🏆 ฟังก์ชันประเมิน Achievements สดๆ จากสถิติ
   const getAchievements = () => {
     if (!profileData) return [];
     const { stats, accuracy, totalGames } = profileData;
@@ -81,7 +80,6 @@ export default function Profile({ onBack }) {
             </div>
             <div className="stat-row">
               <span>ACCURACY:</span>
-              {/* 🌟 ลูกเล่น: เพิ่มหลอดพลัง (Progress Bar) */}
               <div className="accuracy-container">
                 <div className="pixel-progress-bar">
                   <div 
@@ -92,7 +90,7 @@ export default function Profile({ onBack }) {
                 <span className="stat-value text-yellow">{profileData.accuracy}%</span>
               </div>
             </div>
-          </div> {/* 🌟 <-- ตรงนี้แหละครับ! แท็กปิดที่หายไป */}
+          </div> 
 
           {/* ข้อมูลขวา: Achievements */}
           <div className="profile-section achievement-section">
@@ -113,12 +111,19 @@ export default function Profile({ onBack }) {
           <h2 className="section-label">RECENT MISSIONS</h2>
           {profileData.history.length > 0 ? (
             <ul className="history-list">
-              {profileData.history.map((record, idx) => (
-                <li key={idx}>
-                  <span className="history-cat">[{record.category_name}]</span>
-                  <span className="history-score">SCORE: {record.score}</span>
-                </li>
-              ))}
+              {profileData.history.map((record, idx) => {
+                
+                // 🌟 จุดที่แก้ไข: ถ้าชื่อหมวดหมู่เป็น null ให้แสดงข้อความนี้แทน
+                const catName = record.category_name || 'สุ่มมั่ว / HELL MODE';
+
+                return (
+                  <li key={idx}>
+                    {/* 🌟 ปรับสีนิดหน่อยให้ดูสวยขึ้น */}
+                    <span className="history-cat text-pink">[{catName}]</span>
+                    <span className="history-score">SCORE: {record.score}</span>
+                  </li>
+                );
+              })}
             </ul>
           ) : (
             <p className="no-history">NO RECORDS FOUND.</p>

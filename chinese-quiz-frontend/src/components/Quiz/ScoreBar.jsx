@@ -1,10 +1,11 @@
 import React from 'react';
 
-export default function ScoreBar({ score, combo, current, total, lives }) {
-  // 🌟 ฟังก์ชันวาดหัวใจ 3 ดวง
+export default function ScoreBar({ score, combo, current, total, lives, maxLives = 7 }) {
+  // 🌟 ฟังก์ชันวาดหัวใจตามจำนวนหลอดเลือดสูงสุดของโหมดนั้นๆ
   const renderHearts = () => {
     const hearts = [];
-    for (let i = 0; i < 7; i++) {
+    // เปลี่ยนจากเลข 7 เป็น maxLives
+    for (let i = 0; i < maxLives; i++) {
       hearts.push(
         <span key={i} className={`pixel-heart ${i < lives ? 'alive' : 'dead'}`}>
           {i < lives ? '❤️' : '🖤'}
