@@ -4,7 +4,7 @@ import './Home.css';
 import { playSound, playBGM } from '../../SoundManager';
 import { triggerPixelBurst } from './PixelBurst'; 
 
-export default function Home({ onStart, onLeaderboard, onMultiplayer }) { 
+export default function Home({ onStart, onLeaderboard, onMultiplayer, onShop }) {
   const [badgeInfo, setBadgeInfo] = useState('');
 
   // 🌟 2. ใช้ useEffect สั่งให้เล่นเพลงเพลย์ลิสต์ 'home' ทันทีที่เปิดหน้านี้ขึ้นมา
@@ -126,6 +126,14 @@ export default function Home({ onStart, onLeaderboard, onMultiplayer }) {
               onMouseEnter={handleHover}
             >
               [ INSERT COIN TO START ]
+            </button>
+
+            <button 
+              className="pixel-secondary-btn" 
+              onClick={(e) => { e.stopPropagation(); playSound('click'); onShop(); }}
+              onMouseEnter={handleHover}
+            >
+              [ ITEM SHOP ]
             </button>
 
             <button 

@@ -8,7 +8,7 @@ export default function Profile({ onBack }) {
   const [profileData, setProfileData] = useState(null);
   const [loading, setLoading] = useState(true);
 
-  // 🌟 2. เพิ่ม useEffect สำหรับรันเพลง BGM ทันทีที่เข้ามาหน้านี้
+  // 🌟 รันเพลง BGM ทันทีที่เข้ามาหน้านี้
   useEffect(() => {
     playBGM('profile');
   }, []);
@@ -83,6 +83,16 @@ export default function Profile({ onBack }) {
               <span>TOTAL SCORE:</span>
               <span className="stat-value text-pink">{profileData.stats.total_score}</span>
             </div>
+
+            {/* 🌟 เพิ่มแถวแสดงจำนวนเหรียญตรงนี้ แยกจากสกอร์รวมชัดเจน */}
+            <div className="stat-row">
+              <span>COINS:</span>
+              {/* ใช้สีทอง/เหลือง เพื่อให้เข้ากับธีมของเงิน */}
+              <span className="stat-value" style={{ color: '#ffd700' }}>
+                {profileData.stats.coins ?? 0} 🪙
+              </span>
+            </div>
+
             <div className="stat-row">
               <span>ACCURACY:</span>
               <div className="accuracy-container">
@@ -118,12 +128,11 @@ export default function Profile({ onBack }) {
             <ul className="history-list">
               {profileData.history.map((record, idx) => {
                 
-                // 🌟 จุดที่แก้ไข: ถ้าชื่อหมวดหมู่เป็น null ให้แสดงข้อความนี้แทน
+                // จุดที่แก้ไข: ถ้าชื่อหมวดหมู่เป็น null ให้แสดงข้อความนี้แทน
                 const catName = record.category_name || 'สุ่มมั่ว / HELL MODE';
 
                 return (
                   <li key={idx}>
-                    {/* 🌟 ปรับสีนิดหน่อยให้ดูสวยขึ้น */}
                     <span className="history-cat text-pink">[{catName}]</span>
                     <span className="history-score">SCORE: {record.score}</span>
                   </li>

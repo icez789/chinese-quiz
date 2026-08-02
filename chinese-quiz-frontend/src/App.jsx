@@ -9,6 +9,7 @@ import Leaderboard from './components/Leaderboard/Leaderboard';
 import Profile from './components/Profile/Profile';
 import { playSound } from './SoundManager'; 
 import AudioController from './components/Shared/AudioController'; // ปรับ Path ตามที่คุณสร้าง
+import Shop from './components/Shop/Shop'; // 🌟 ปรับ Path ให้ตรงกับโฟลเดอร์ที่คุณเซฟไว้
 
 export default function App() {
   const { user, token, logout, isLoading } = useContext(AuthContext);
@@ -80,7 +81,15 @@ export default function App() {
       {screen === 'home' && (
         <Home 
           onStart={() => setScreen('category')} 
-          onLeaderboard={() => setScreen('leaderboard')} 
+          onLeaderboard={() => setScreen('leaderboard')}
+          onShop={() => setScreen('shop')} 
+        />
+      )}
+
+      {screen === 'shop' && (
+        <Shop 
+          onBack={() => setScreen('home')} 
+          token={token} 
         />
       )}
 
@@ -93,13 +102,12 @@ export default function App() {
       {screen === 'category' && (
         <CategoryMenu 
           onSelect={(id) => {
-            // 🌟 เช็คว่ากด HELL MODE มาหรือเปล่า
             if (id === 'hell') {
-              setCategoryId('all'); // Hell mode บังคับสุ่มทุกหมวด
-              setGameLevel(3); // ส่ง Level 3 (ยากสุด) ไปให้หน้า Quiz
+              setCategoryId('all'); 
+              setGameLevel(3); 
             } else {
               setCategoryId(id);
-              setGameLevel(1); // โหมดปกติ ส่ง Level 1
+              setGameLevel(1); 
             }
             setScreen('quiz');
           }}
@@ -110,7 +118,8 @@ export default function App() {
       {screen === 'quiz' && (
         <Quiz
           categoryId={categoryId}
-          level={gameLevel} // 🌟 ส่ง Level ที่อัปเดตแล้วไปให้ Quiz ประมวลผล
+          level={gameLevel} 
+          token={token} /* 🌟 เพิ่ม Token ส่งไปให้ Quiz ใช้งานไอเทมที่นี่! */
           onFinish={(res) => {
             setResult(res); 
             setScreen('result');

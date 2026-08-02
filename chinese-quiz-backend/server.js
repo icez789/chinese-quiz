@@ -242,6 +242,105 @@ const authenticateToken = (req, res, next) => {
   });
 };
 
+// ==========================================
+// 🛒 ระบบร้านค้าและกระเป๋าไอเทม (SHOP & INVENTORY)
+// ==========================================
+
+// ---------- GET /api/shop/inventory (เช็คเงินและของในกระเป๋า) ----------
+app.get('/api/shop/inventory', authenticateToken, async (req, res) => {
+  const userId = req.user.id;
+  try {
+    const [[stats]] = await pool.query('SELECT coins FROM user_stats WHERE user_id = ?', [userId]);
+    const [items] = await pool.query('SELECT item_id, quantity FROM user_inventory WHERE user_id = ?', [userId]);
+    
+    // จัดรูปร่างข้อมูลให้ฝั่งหน้าบ้านใช้ง่ายๆ
+    const inventory = {};
+    items.forEach(row => {
+      inventory[row.item_id] = row.quantity;
+    });
+
+    res.json({ coins: stats?.coins || 0, inventory });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'โหลดกระเป๋าไม่สำเร็จ' });
+  }
+});
+
+// ---------- POST /api/shop/buy (ระบบจ่ายเงินซื้อของ) ----------
+app.post('/api/shop/buy', authenticateToken, async (req, res) => {
+  const { item_id, price } = req.body;
+  const userId = req.user.id;
+
+  const conn = await pool.getConnection();
+  try {
+    await conn.beginTransaction();
+
+    // 1. เช็คเงินในกระเป๋า (ใช้ FOR UPDATE เพื่อป้องกันการกดซื้อรัวๆ บัคปั๊มของ)
+    const [[stats]] = await conn.query('SELECT coins FROM user_stats WHERE user_id = ? FOR UPDATE', [userId]);
+    if (!stats || stats.coins < price) {
+      await conn.rollback();
+      return res.status(400).json({ error: 'เงินไม่พอ! ไปฟาร์มคะแนนมาก่อนนะ' });
+    }
+
+    // 2. หักเงิน
+    await conn.query('UPDATE user_stats SET coins = coins - ? WHERE user_id = ?', [price, userId]);
+
+    // 3. เพิ่มของลงกระเป๋า (ถ้ามีของเดิมอยู่แล้วให้บวกเพิ่ม)
+    await conn.query(
+      `INSERT INTO user_inventory (user_id, item_id, quantity) 
+       VALUES (?, ?, 1) 
+       ON DUPLICATE KEY UPDATE quantity = quantity + 1`,
+      [userId, item_id]
+    );
+
+    await conn.commit();
+    res.json({ success: true, remaining_coins: stats.coins - price });
+  } catch (err) {
+    await conn.rollback();
+    console.error(err);
+    res.status(500).json({ error: 'ทำรายการไม่สำเร็จ' });
+  } finally {
+    conn.release();
+  }
+});
+
+// ---------- POST /api/shop/use (ระบบกดใช้ไอเทมตอนเล่นเกม) ----------
+app.post('/api/shop/use', authenticateToken, async (req, res) => {
+  const { item_id } = req.body;
+  const userId = req.user.id;
+
+  const conn = await pool.getConnection();
+  try {
+    await conn.beginTransaction();
+    
+    // เช็คว่ามีของในกระเป๋าจริงๆ ใช่ไหม
+    const [[item]] = await conn.query(
+      'SELECT quantity FROM user_inventory WHERE user_id = ? AND item_id = ? FOR UPDATE', 
+      [userId, item_id]
+    );
+
+    if (!item || item.quantity <= 0) {
+      await conn.rollback();
+      return res.status(400).json({ error: 'ไอเทมหมดแล้ว!' });
+    }
+
+    // หักของ 1 ชิ้น
+    await conn.query(
+      'UPDATE user_inventory SET quantity = quantity - 1 WHERE user_id = ? AND item_id = ?', 
+      [userId, item_id]
+    );
+    
+    await conn.commit();
+    res.json({ success: true, remaining: item.quantity - 1 });
+  } catch (err) {
+    await conn.rollback();
+    console.error("Error ตอนใช้ไอเทม:", err);
+    res.status(500).json({ error: 'ใช้งานไอเทมไม่สำเร็จ' });
+  } finally {
+    conn.release();
+  }
+});
+
 // ---------- POST /api/score ----------
 app.post('/api/score', authenticateToken, async (req, res) => {
   const { category_id, score, total_questions } = req.body;
@@ -272,10 +371,12 @@ app.post('/api/score', authenticateToken, async (req, res) => {
     );
 
     await conn.query(
-      `INSERT INTO user_stats (user_id, total_score, current_level)
-       VALUES (?, ?, 1)
-       ON DUPLICATE KEY UPDATE total_score = total_score + VALUES(total_score)`,
-      [userId, score]
+      `INSERT INTO user_stats (user_id, total_score, current_level, coins)
+       VALUES (?, ?, 1, ?)
+       ON DUPLICATE KEY UPDATE 
+         total_score = total_score + VALUES(total_score),
+         coins = coins + VALUES(coins)`,
+      [userId, score, score] // ส่ง score ไปให้ช่องเหรียญด้วย
     );
 
     const [[stats]] = await conn.query(
@@ -346,9 +447,9 @@ app.get('/api/profile', authenticateToken, async (req, res) => {
 
   try {
     const [[stats]] = await pool.query(
-      'SELECT total_score, current_level FROM user_stats WHERE user_id = ?', 
-      [userId]
-    );
+  'SELECT current_level, total_score, coins FROM user_stats WHERE user_id = ?', 
+  [userId]
+);
 
     // 🌟 ดึงข้อมูลประวัติ และแปลงค่า NULL เป็นชื่อโหมดสุ่มมั่ว / HELL MODE
     const [history] = await pool.query(`
