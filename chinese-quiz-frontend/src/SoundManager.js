@@ -106,7 +106,6 @@ export function playSound(name) {
 const BGM_PLAYLISTS = {
   home: [
     '/sounds/home-1.mp3', 
-    '/sounds/home-2.mp3'
   ],
   category: [
     '/sounds/category-1.mp3'
