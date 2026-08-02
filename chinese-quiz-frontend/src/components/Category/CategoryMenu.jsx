@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
-import { playSound } from '../../SoundManager';
+// 🌟 1. นำเข้า playBGM เข้ามาเพิ่ม
+import { playSound, playBGM } from '../../SoundManager';
 import './CategoryMenu.css';
 
 // 🌟 อัปเดต ICON_RULES เพิ่มคำค้นหาให้ครอบคลุมหมวดหมู่พื้นฐานทั้งหมด
@@ -39,6 +40,11 @@ export default function CategoryMenu({ onSelect, onBack }) {
   const [categories, setCategories] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+
+  // 🌟 2. เพิ่ม useEffect สำหรับรันเพลง BGM ทันทีที่เข้ามาหน้านี้
+  useEffect(() => {
+    playBGM('category');
+  }, []);
 
   useEffect(() => {
     fetch('/api/categories')

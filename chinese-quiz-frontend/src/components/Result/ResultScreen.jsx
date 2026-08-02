@@ -1,9 +1,15 @@
 import React, { useState, useEffect } from 'react';
 import './ResultScreen.css';
-import { playSound } from '../../SoundManager'; // 🌟 1. ดึงระบบเสียงเข้ามา
+// 🌟 1. ดึง playBGM เข้ามาเพิ่ม
+import { playSound, playBGM } from '../../SoundManager'; 
 
 export default function ResultScreen({ result, onRetry, onHome, onSave }) {
   const [displayScore, setDisplayScore] = useState(0);
+
+  // 🌟 2. สั่งให้เล่นเพลงหน้า Result ทันทีที่โหลดหน้านี้
+  useEffect(() => {
+    playBGM('result');
+  }, []);
 
   const score = result?.score || 0;
   const totalQuestions = result?.total || 10;
@@ -39,10 +45,10 @@ export default function ResultScreen({ result, onRetry, onHome, onSave }) {
     return () => clearInterval(timer);
   }, [score]);
 
-  // 🌟 2. ฟังก์ชันจัดการเสียงตอนชี้ปุ่ม
+  // ฟังก์ชันจัดการเสียงตอนชี้ปุ่ม
   const handleHover = () => playSound('tick');
 
-  // 🌟 3. ฟังก์ชันจัดการเสียงและหน่วงเวลาตอนคลิก
+  // ฟังก์ชันจัดการเสียงและหน่วงเวลาตอนคลิก
   const handleRetryClick = () => {
     playSound('start'); // เสียงเริ่มเกม
     setTimeout(() => onRetry(), 400);
@@ -92,16 +98,13 @@ export default function ResultScreen({ result, onRetry, onHome, onSave }) {
 
         {/* ปุ่มกดสไตล์อาร์เคด */}
         <div className="pixel-result-actions">
-          {/* 🌟 4. ใส่ Event เสียงเข้าไปในปุ่ม */}
           <button className="pixel-action-btn btn-retry" onClick={handleRetryClick} onMouseEnter={handleHover}>
             [ INSERT COIN TO RETRY ]
           </button>
           <button className="pixel-action-btn btn-retry" onClick={handleSaveClick} onMouseEnter={handleHover}>
             [ SAVE HIGH SCORE ]
           </button>
-          <button className="pixel-action-btn btn-home" onClick={handleRetryClick} onMouseEnter={handleHover}>
-            [ PLAY AGAIN ]
-          </button>
+      
           <button className="pixel-action-btn btn-home" onClick={handleHomeClick} onMouseEnter={handleHover}>
             [ RETURN TO TITLE ]
           </button>

@@ -1,17 +1,21 @@
-import React, { useState, useEffect } from 'react'; // 🌟 1. อย่าลืม import useState เข้ามาด้วยนะครับ
+import React, { useState, useEffect } from 'react'; 
 import './Home.css';
-import { playSound } from '../../SoundManager';
+// 🌟 1. นำเข้า playBGM เข้ามาจาก SoundManager
+import { playSound, playBGM } from '../../SoundManager';
 import { triggerPixelBurst } from './PixelBurst'; 
 
-export default function Home({ onStart, onLeaderboard, onMultiplayer }) { // 🌟 รับ onMultiplayer มาด้วย
-  // 🌟 2. เพิ่ม State สำหรับเก็บข้อความอธิบายตอนคลิกป้าย
+export default function Home({ onStart, onLeaderboard, onMultiplayer }) { 
   const [badgeInfo, setBadgeInfo] = useState('');
+
+  // 🌟 2. ใช้ useEffect สั่งให้เล่นเพลงเพลย์ลิสต์ 'home' ทันทีที่เปิดหน้านี้ขึ้นมา
+  useEffect(() => {
+    playBGM('home');
+  }, []);
 
   const handleHover = () => playSound('tick');
   
-  // 🌟 3. ฟังก์ชันจัดการตอนคลิกป้าย
   const handleBadgeClick = (e, type) => {
-    e.stopPropagation(); // กันไม่ให้ไปทริกเกอร์เอฟเฟกต์ระเบิดจอซ้ำซ้อน
+    e.stopPropagation(); 
     playSound('click');
     
     if (type === 'stages') {
@@ -25,7 +29,6 @@ export default function Home({ onStart, onLeaderboard, onMultiplayer }) { // �
     const handleGlobalClick = (e) => {
       if (typeof triggerPixelBurst === 'function') triggerPixelBurst(e);
       playSound('wakeup'); 
-      // 🌟 แอบซ่อนข้อความอธิบายเวลาผู้เล่นคลิกที่อื่นบนจอ
       setBadgeInfo('');
     };
     
@@ -51,7 +54,7 @@ export default function Home({ onStart, onLeaderboard, onMultiplayer }) { // �
 
   const handleMultiplayerClick = (e) => {
     e.stopPropagation();
-    playSound('start'); // หรือจะใช้เสียง click ก็ได้
+    playSound('start'); 
     setTimeout(() => {
       onMultiplayer();
     }, 400); 
@@ -80,7 +83,6 @@ export default function Home({ onStart, onLeaderboard, onMultiplayer }) { // �
             เกมทายคำศัพท์ภาษาจีนจากรูปภาพ<span className="blink">_</span>
           </p>
           
-          {/* 🌟 4. อัปเกรดป้ายให้กดและชี้ได้ */}
           <div className="pixel-badges">
             <span 
               className="pixel-badge interactive"
@@ -98,7 +100,6 @@ export default function Home({ onStart, onLeaderboard, onMultiplayer }) { // �
             </span>
           </div>
 
-          {/* 🌟 5. กล่องข้อความอธิบายที่จะโผล่มาตอนกดป้าย */}
           {badgeInfo && (
             <div className="pixel-badge-info">
               {badgeInfo}
@@ -106,7 +107,7 @@ export default function Home({ onStart, onLeaderboard, onMultiplayer }) { // �
           )}
         </div>
 
-        {/* 📜 ฝั่งขวา: กติกาและปุ่มต่างๆ (เหมือนเดิม) */}
+        {/* 📜 ฝั่งขวา: กติกาและปุ่มต่างๆ */}
         <div className="pixel-home-right">
           <div className="pixel-rules-box">
             <h2 className="pixel-rules-title">HOW TO PLAY</h2>
@@ -127,8 +128,6 @@ export default function Home({ onStart, onLeaderboard, onMultiplayer }) { // �
               [ INSERT COIN TO START ]
             </button>
 
-           
-            
             <button 
               className="pixel-secondary-btn" 
               onClick={handleLeaderboardClick}

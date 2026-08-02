@@ -1,11 +1,16 @@
 import React, { useState, useEffect } from 'react';
 import './Leaderboard.css';
-import { playSound } from '../../SoundManager'; // 🌟 1. Import ระบบเสียงเข้ามา
+import { playSound, playBGM } from '../../SoundManager';
 
 export default function Leaderboard({ onHome }) {
   const [highScores, setHighScores] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
+
+  // 🌟 2. เพิ่ม useEffect สำหรับรันเพลง BGM ทันทีที่เข้ามาหน้านี้
+  useEffect(() => {
+    playBGM('leaderboard');
+  }, []);
 
   useEffect(() => {
     const fetchLeaderboard = async () => {

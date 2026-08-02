@@ -8,6 +8,7 @@ import CategoryMenu from './components/Category/CategoryMenu';
 import Leaderboard from './components/Leaderboard/Leaderboard'; 
 import Profile from './components/Profile/Profile';
 import { playSound } from './SoundManager'; 
+import AudioController from './components/Shared/AudioController'; // ปรับ Path ตามที่คุณสร้าง
 
 export default function App() {
   const { user, token, logout, isLoading } = useContext(AuthContext);
@@ -57,6 +58,7 @@ export default function App() {
 
   return (
     <>
+      <AudioController />
       <div style={{ position: 'absolute', top: 15, right: 20, zIndex: 100, color: '#fff', fontFamily: "'Press Start 2P', monospace", fontSize: '10px' }}>
         PLAYER: <span style={{ color: 'var(--pixel-green, #39ff14)' }}>{user.username}</span> 
 

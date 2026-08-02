@@ -2,14 +2,14 @@ import { useState, useEffect, useCallback } from 'react';
 import QuestionCard from './QuestionCard';
 import ScoreBar from './ScoreBar';
 import TimerBar from './TimerBar';
-import { playSound } from "../../SoundManager";
+// 🌟 นำเข้า playBGM และ stopBGM เพิ่มเข้ามา
+import { playSound, playBGM, stopBGM } from "../../SoundManager";
 import { triggerPixelBurst } from '../Home/PixelBurst'; 
 import './Quiz.css';
 
 const API_BASE = '';
 
 export default function Quiz({ categoryId, level, onFinish }) {
-  // 🌟 ตั้งค่าความโหด: ถ้า level 3 (Hell Mode) ให้เวลา 5 วิ หัวใจ 3 ดวง / โหมดปกติ 10 วิ หัวใจ 7 ดวง
   const MAX_TIME = level === 3 ? 5 : 10;
   const STARTING_LIVES = level === 3 ? 3 : 7;
 
@@ -20,12 +20,10 @@ export default function Quiz({ categoryId, level, onFinish }) {
   const [loading, setLoading] = useState(true);
   const [selected, setSelected] = useState(null);
   const [feedback, setFeedback] = useState(null); 
-  
-  // 🌟 ให้หัวใจเริ่มต้นตามโหมดที่เล่น
   const [lives, setLives] = useState(STARTING_LIVES);
 
+  // 1. ดึงข้อมูลคำถาม
   useEffect(() => {
-    // 🌟 บังคับดึงคำศัพท์ level=1 เสมอ ตามที่มีใน Database!
     let fetchUrl = `${API_BASE}/api/words?level=1&limit=10`;
     if (categoryId !== 'all' && categoryId !== 0) {
       fetchUrl += `&category_id=${categoryId}`;
@@ -44,7 +42,24 @@ export default function Quiz({ categoryId, level, onFinish }) {
         console.error('โหลดคำถามไม่สำเร็จ', err);
         setLoading(false);
       });
-  }, [categoryId]); // เอา level ออกจากตรงนี้เพราะเราฟิกซ์ดึงแต่ level=1 เสมอ
+  }, [categoryId]);
+
+  // 🌟 2. ระบบเปิดเพลง BGM เมื่อโหลดข้อสอบเสร็จ
+  useEffect(() => {
+    if (!loading && questions.length > 0) {
+      if (level === 3) {
+        playBGM('quiz_hell'); 
+      } else if (categoryId === 'all') {
+        playBGM('quiz_random');
+      } else {
+        playBGM('quiz_normal');
+      }
+    }
+
+    return () => {
+      stopBGM();
+    };
+  }, [loading, questions.length, level, categoryId]);
 
   const handleAnswer = useCallback(
     (choiceIndex, e) => {
@@ -88,6 +103,8 @@ export default function Quiz({ categoryId, level, onFinish }) {
   );
 
   const finishQuiz = (finalScore) => {
+    // 🌟 3. ปิดเพลง BGM ตอนจบเกม เพื่อให้เสียง Finish ทำงานได้ชัดๆ
+    stopBGM();
     playSound('finish');
     onFinish({ 
       score: finalScore, 
@@ -120,12 +137,12 @@ export default function Quiz({ categoryId, level, onFinish }) {
           current={current + 1}
           total={questions.length}
           lives={lives} 
-          maxLives={STARTING_LIVES} // 🌟 แอบส่งจำนวนหัวใจสูงสุดไปให้ ScoreBar เผื่อนำไปใช้
+          maxLives={STARTING_LIVES} 
         />
         
         <TimerBar 
           key={current} 
-          timeLimit={MAX_TIME} // 🌟 เปลี่ยนเวลาจำกัดให้ตรงกับโหมด (5 หรือ 10)
+          timeLimit={MAX_TIME} 
           isPaused={selected !== null} 
           onTimeUp={() => handleAnswer(-1, null)} 
         />

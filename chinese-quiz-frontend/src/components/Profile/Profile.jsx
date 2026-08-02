@@ -1,12 +1,17 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { AuthContext } from '../../AuthContext';
-import { playSound } from '../../SoundManager';
+import { playSound, playBGM } from '../../SoundManager';
 import './Profile.css';
 
 export default function Profile({ onBack }) {
   const { user, token } = useContext(AuthContext);
   const [profileData, setProfileData] = useState(null);
   const [loading, setLoading] = useState(true);
+
+  // 🌟 2. เพิ่ม useEffect สำหรับรันเพลง BGM ทันทีที่เข้ามาหน้านี้
+  useEffect(() => {
+    playBGM('profile');
+  }, []);
 
   useEffect(() => {
     const fetchProfile = async () => {
