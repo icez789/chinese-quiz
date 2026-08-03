@@ -11,6 +11,7 @@ import { playSound } from './SoundManager';
 import AudioController from './components/Shared/AudioController'; // ปรับ Path ตามที่คุณสร้าง
 import Shop from './components/Shop/Shop'; // 🌟 ปรับ Path ให้ตรงกับโฟลเดอร์ที่คุณเซฟไว้
 import Dictionary from './components/Dictionary/Dictionary'; // 🌟 ปรับ Path ให้ตรง
+import BossBattle from './components/BossBattle/BossBattle';
 
 export default function App() {
   const { user, token, logout, isLoading } = useContext(AuthContext);
@@ -85,6 +86,7 @@ export default function App() {
           onLeaderboard={() => setScreen('leaderboard')}
           onShop={() => setScreen('shop')} 
           onDictionary={() => setScreen('dictionary')}
+          onBossBattle={() => setScreen('boss')} /* 🌟 เพิ่มทางเข้าโหมดบอส */
         />
       )}
 
@@ -128,6 +130,22 @@ export default function App() {
           token={token} /* 🌟 เพิ่ม Token ส่งไปให้ Quiz ใช้งานไอเทมที่นี่! */
           onFinish={(res) => {
             setResult(res); 
+            setScreen('result');
+          }}
+        />
+      )}
+
+      {screen === 'boss' && (
+        <BossBattle
+          token={token}
+          onFinish={(res) => {
+            // โหมดบอสจะส่งค่า { score, status } กลับมา
+            setResult({
+              score: res.score,
+              total: 10, // ตีซะว่าบอสเลือด 100 ต้องตอบ 10 ข้อ
+              isBossMode: true, // 🌟 แปะป้ายบอกหน้า Result ว่านี่คือโหมดบอสนะ
+              status: res.status // 'VICTORY' หรือ 'DEFEAT'
+            }); 
             setScreen('result');
           }}
         />

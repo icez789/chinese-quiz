@@ -1,0 +1,132 @@
+/* =========================================
+   ⚔️ SPLIT-SCREEN LAYOUT (หน้าจอ 2 ฝั่ง)
+========================================= */
+.boss-battle-layout {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  gap: 40px;
+  width: 100%;
+  max-width: 1100px; /* ขยายพื้นที่ให้กว้างขึ้น */
+  z-index: 10;
+  padding: 20px;
+}
+
+/* โซนซ้าย: ห้องบอส */
+.boss-pane {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0, 0, 0, 0.7); /* พื้นหลังมืดๆ ให้บอสเด่น */
+  border: 4px dashed #ff2a2a; /* ตีกรอบสีแดงเตือนภัย */
+  border-radius: 12px;
+  padding: 40px 20px;
+  box-shadow: 0 0 30px rgba(255, 42, 42, 0.2) inset;
+}
+
+/* โซนขวา: คำถาม */
+.combat-pane {
+  flex: 1.2;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+}
+
+/* =========================================
+   UI บอส (คืนขนาดให้ใหญ่ขึ้นเพราะมีพื้นที่แล้ว)
+========================================= */
+.boss-ui-container {
+  display: flex; flex-direction: column; align-items: center; 
+  width: 100%; gap: 10px; margin-bottom: 20px;
+}
+
+.boss-name {
+  color: #ff2a2a; font-family: 'Press Start 2P', monospace; 
+  font-size: 1.2rem; margin-bottom: 5px; text-shadow: 2px 2px 0px #550000;
+}
+
+.boss-hp-bar {
+  width: 100%; max-width: 400px; height: 25px; 
+  background: #222; border: 3px solid #555; position: relative;
+}
+
+.boss-hp-fill {
+  height: 100%; background: linear-gradient(90deg, #ff0000, #ff7f00); 
+  transition: width 0.3s ease-out;
+}
+
+.player-hp-wrapper { 
+  font-size: 20px; letter-spacing: 5px; margin-top: 10px; 
+}
+
+/* =========================================
+   อัปเดตโซนตัวบอสสำหรับรองรับรูปภาพ <img>
+========================================= */
+.boss-sprite-container {
+  display: flex; justify-content: center; align-items: center; 
+  height: 180px; /* ปรับความสูงกล่องให้พอดีกับรูป */
+  margin-bottom: 20px;
+}
+
+.boss-image {
+  max-height: 180px; /* คุมขนาดบอสไม่ให้ล้นจอ */
+  width: auto;
+  image-rendering: pixelated; /* 🌟 ทำให้ภาพคงความเหลี่ยมแบบ 8-bit ไม่เบลอ */
+  filter: drop-shadow(0px 10px 10px rgba(0, 0, 0, 0.8)); /* ใส่เงาใต้ฐาน */
+  transition: all 0.1s ease-out;
+}
+
+.boss-idle { animation: float-boss 2.5s ease-in-out infinite; }
+
+/* 🌟 เอฟเฟกต์ตอนบอสโดนโจมตี (ใช้กับรูปภาพ) */
+.boss-hit .boss-image { 
+  animation: shake-boss 0.5s; 
+  /* ดันความสว่างและย้อมสีแดงให้รูปภาพตอนโดนตี */
+  filter: brightness(1.5) sepia(1) hue-rotate(-50deg) saturate(5) drop-shadow(0 0 20px red); 
+}
+
+.damage-flash {
+  position: fixed; inset: 0; background: rgba(255, 0, 0, 0.3); 
+  z-index: 999; pointer-events: none; animation: flash-screen 0.3s forwards;
+}
+
+@keyframes float-boss {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-15px); }
+}
+
+@keyframes shake-boss {
+  0%, 100% { transform: translateX(0); }
+  25% { transform: translateX(-15px) rotate(-10deg); }
+  50% { transform: translateX(15px) rotate(10deg); }
+  75% { transform: translateX(-15px) rotate(-10deg); }
+}
+
+@keyframes flash-screen {
+  0% { opacity: 1; }
+  100% { opacity: 0; }
+}
+
+/* =========================================
+   📱 RESPONSIVE (ปรับเป็นบน-ล่าง ถ้าจอมือถือ/จอเล็ก)
+========================================= */
+@media (max-width: 900px) {
+  .boss-battle-layout {
+    flex-direction: column;
+    gap: 15px;
+    padding: 10px;
+  }
+  .boss-pane {
+    padding: 15px;
+    width: 100%;
+  }
+  
+  /* ถ้าย่อจอ ให้บอสตัวเล็กลงหน่อยจะได้ไม่ล้น */
+  .boss-sprite-container { font-size: 60px; height: 70px; margin-bottom: 5px; }
+  .boss-ui-container { gap: 5px; margin-bottom: 5px; }
+  .boss-hp-bar { height: 15px; }
+  .player-hp-wrapper { font-size: 14px; }
+}

@@ -3,7 +3,7 @@ import './Home.css';
 import { playSound, playBGM } from '../../SoundManager';
 import { triggerPixelBurst } from './PixelBurst'; 
 
-export default function Home({ onStart, onLeaderboard, onMultiplayer, onShop, onDictionary }) {
+export default function Home({ onStart, onLeaderboard, onMultiplayer, onShop, onDictionary, onBossBattle }) {
   const [badgeInfo, setBadgeInfo] = useState('');
 
   useEffect(() => {
@@ -147,6 +147,21 @@ export default function Home({ onStart, onLeaderboard, onMultiplayer, onShop, on
               onMouseEnter={handleHover}
             >
               [ INSERT COIN TO START ]
+            </button>
+
+            <button 
+              className="pixel-start-btn" 
+              onClick={(e) => { e.stopPropagation(); playSound('start'); onBossBattle(); }}
+              onMouseEnter={handleHover}
+              style={{ 
+                width: '100%', 
+                margin: 0, 
+                backgroundColor: '#550000', /* สีแดงเลือดหมูให้ดูอันตราย */
+                borderColor: '#ff2a2a',
+                color: '#ffcece'
+              }}
+            >
+              [ 🐉 BOSS BATTLE ]
             </button>
 
             <button 
