@@ -243,6 +243,23 @@ const authenticateToken = (req, res, next) => {
 };
 
 // ==========================================
+// 📚 ระบบคลังคำศัพท์ (DICTIONARY)
+// ==========================================
+app.get('/api/dictionary', authenticateToken, async (req, res) => {
+  try {
+    // ดึงหมวดหมู่ทั้งหมด (ยกเว้นหมวด 0 ที่เป็นสุ่มมั่ว)
+    const [categories] = await pool.query('SELECT * FROM categories WHERE id != 0 ORDER BY id');
+    // ดึงคำศัพท์ทั้งหมด
+    const [words] = await pool.query('SELECT * FROM words ORDER BY category_id, id');
+    
+    res.json({ categories, words });
+  } catch (err) {
+    console.error("Error โหลดคลังคำศัพท์:", err);
+    res.status(500).json({ error: 'ไม่สามารถดึงข้อมูลคลังคำศัพท์ได้' });
+  }
+});
+
+// ==========================================
 // 🛒 ระบบร้านค้าและกระเป๋าไอเทม (SHOP & INVENTORY)
 // ==========================================
 

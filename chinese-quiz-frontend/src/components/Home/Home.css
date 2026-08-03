@@ -221,26 +221,26 @@
 }
 
 /* =========================================
-   📱 Responsive สำหรับจอมือถือ (ต้องอยู่ล่างสุดเสมอ)
-   ========================================= */
-@media (max-width: 900px) {
-  .pixel-home-content { flex-direction: column; text-align: center; }
-  .pixel-subtitle { border-left: none; border-bottom: 4px solid var(--pixel-pink); padding-bottom: 15px; }
-  .pixel-badges { justify-content: center; }
-  .pixel-main-title { font-size: 2.5rem; }
-  .pixel-rules-list li { justify-content: center; padding-left: 10px !important; border: none !important; } 
-}
-
-/* =========================================
    🕹️ BUTTON GROUPS (จัดเรียงปุ่มให้สวยงาม)
    ========================================= */
 .pixel-button-group {
   display: flex;
   flex-direction: column;
-  gap: 15px; /* ระยะห่างระหว่าง 2 ปุ่ม */
+  gap: 15px; /* ระยะห่างระหว่างปุ่ม */
+  width: 100%; /* 🌟 สั่งให้กว้างเต็มพื้นที่กล่องฝั่งขวา */
+  /* ลบ max-width ออกไป เพื่อให้มันยืดสุดขอบเท่ากล่อง HOW TO PLAY */
+  margin-top: 5px; 
 }
 
-/* 🌟 ปุ่มรอง (High Scores) สไตล์สีฟ้า */
+/* 🌟 ควบคุมปุ่มทุกตัวที่อยู่ข้างใน Group */
+.pixel-button-group button {
+  width: 100%;
+  margin: 0 !important; 
+  white-space: nowrap; 
+  box-sizing: border-box; /* 🌟 สำคัญมาก: สั่งให้ขอบ (Border) ถูกนับรวมใน 100% ป้องกันปุ่มทะลุขอบจอ */
+}
+
+/* 🌟 ปุ่มรอง (High Scores, Shop, Dictionary) สไตล์สีฟ้า */
 .pixel-secondary-btn {
   background: #000;
   color: var(--pixel-blue, #00f2fe);
@@ -266,7 +266,6 @@
   transform: translate(4px, 4px);
   box-shadow: 0px 0px 0px transparent;
 }
-
 /* =========================================
    🌟 INTERACTIVE BADGES & TOOLTIP
    ========================================= */
@@ -319,4 +318,15 @@
     opacity: 1;
     transform: translateX(0);
   }
+}
+
+/* =========================================
+   📱 Responsive สำหรับจอมือถือ (ต้องอยู่ล่างสุดเสมอ)
+   ========================================= */
+@media (max-width: 900px) {
+  .pixel-home-content { flex-direction: column; text-align: center; }
+  .pixel-subtitle { border-left: none; border-bottom: 4px solid var(--pixel-pink); padding-bottom: 15px; }
+  .pixel-badges { justify-content: center; }
+  .pixel-main-title { font-size: 2.5rem; }
+  .pixel-rules-list li { justify-content: center; padding-left: 10px !important; border: none !important; } 
 }

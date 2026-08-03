@@ -10,6 +10,7 @@ import Profile from './components/Profile/Profile';
 import { playSound } from './SoundManager'; 
 import AudioController from './components/Shared/AudioController'; // ปรับ Path ตามที่คุณสร้าง
 import Shop from './components/Shop/Shop'; // 🌟 ปรับ Path ให้ตรงกับโฟลเดอร์ที่คุณเซฟไว้
+import Dictionary from './components/Dictionary/Dictionary'; // 🌟 ปรับ Path ให้ตรง
 
 export default function App() {
   const { user, token, logout, isLoading } = useContext(AuthContext);
@@ -83,6 +84,7 @@ export default function App() {
           onStart={() => setScreen('category')} 
           onLeaderboard={() => setScreen('leaderboard')}
           onShop={() => setScreen('shop')} 
+          onDictionary={() => setScreen('dictionary')}
         />
       )}
 
@@ -91,6 +93,10 @@ export default function App() {
           onBack={() => setScreen('home')} 
           token={token} 
         />
+      )}
+
+      {screen === 'dictionary' && (
+        <Dictionary onBack={() => setScreen('home')} />
       )}
 
       {screen === 'leaderboard' && (

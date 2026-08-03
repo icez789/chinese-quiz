@@ -1,13 +1,11 @@
 import React, { useState, useEffect } from 'react'; 
 import './Home.css';
-// 🌟 1. นำเข้า playBGM เข้ามาจาก SoundManager
 import { playSound, playBGM } from '../../SoundManager';
 import { triggerPixelBurst } from './PixelBurst'; 
 
-export default function Home({ onStart, onLeaderboard, onMultiplayer, onShop }) {
+export default function Home({ onStart, onLeaderboard, onMultiplayer, onShop, onDictionary }) {
   const [badgeInfo, setBadgeInfo] = useState('');
 
-  // 🌟 2. ใช้ useEffect สั่งให้เล่นเพลงเพลย์ลิสต์ 'home' ทันทีที่เปิดหน้านี้ขึ้นมา
   useEffect(() => {
     playBGM('home');
   }, []);
@@ -100,6 +98,28 @@ export default function Home({ onStart, onLeaderboard, onMultiplayer, onShop }) 
             </span>
           </div>
 
+          {/* 🌟 ย้ายปุ่ม WORD LIBRARY มาไว้ฝั่งซ้ายตรงนี้! แปลงร่างเป็น Badge สวยๆ */}
+          <div style={{ marginTop: '25px' }}>
+            <button
+              className="pixel-badge interactive"
+              onClick={(e) => { e.stopPropagation(); playSound('click'); onDictionary(); }}
+              onMouseEnter={handleHover}
+              style={{
+                backgroundColor: '#000',
+                color: 'var(--pixel-blue, #00f2fe)',
+                borderColor: 'var(--pixel-blue, #00f2fe)',
+                fontFamily: "'Press Start 2P', monospace",
+                fontSize: '0.8rem',
+                cursor: 'pointer',
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: '10px'
+              }}
+            >
+              📚 [ WORD LIBRARY ]
+            </button>
+          </div>
+
           {badgeInfo && (
             <div className="pixel-badge-info">
               {badgeInfo}
@@ -119,6 +139,7 @@ export default function Home({ onStart, onLeaderboard, onMultiplayer, onShop }) 
             </ul>
           </div>
           
+          {/* 🌟 ฝั่งขวาจะเหลือแค่ 3 ปุ่ม ทำให้ไม่ล้นหน้าจอแล้ว */}
           <div className="pixel-button-group">
             <button 
               className="pixel-start-btn" 
