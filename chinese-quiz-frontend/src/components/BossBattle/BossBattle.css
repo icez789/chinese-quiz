@@ -63,6 +63,96 @@
 }
 
 /* =========================================
+   🌟🎒 VERTICAL ITEM BAR (แถบไอเทมแนวตั้งแบบกล่องสี่เหลี่ยม)
+========================================= */
+.pixel-vertical-item-bar {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 15px; /* ระยะห่างระหว่างกล่องไอเทม */
+  width: 90px;
+}
+
+.pixel-vertical-item-bar .items-label {
+  color: var(--pixel-yellow, #fce83a);
+  font-family: 'Press Start 2P', monospace;
+  font-size: 0.8rem;
+  margin: 0 0 10px 0;
+  text-shadow: 2px 2px 0px #000;
+}
+
+/* สไตล์กล่องไอเทมสี่เหลี่ยม (boxed) */
+.pixel-item-box {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  padding: 10px;
+  background: #000;
+  border: 3px solid #00f2fe; /* สีฟ้าสด */
+  border-radius: 6px;
+  cursor: pointer;
+  box-shadow: 6px 6px 0px #005f73; /* เงาสีฟ้าเข้ม */
+  transition: all 0.1s ease-out;
+}
+
+.pixel-item-box:hover {
+  background: #00f2fe;
+  color: #000;
+  border-color: #00f2fe;
+  transform: translate(-3px, -3px);
+  box-shadow: 9px 9px 0px #005f73;
+}
+
+.pixel-item-box:active {
+  transform: translate(3px, 3px);
+  box-shadow: 0px 0px 0px transparent;
+}
+
+/* สไตล์เมื่อไอเทมหมดหรือกดไม่ได้ */
+.pixel-item-box.disabled {
+  background: #333 !important;
+  color: #666 !important;
+  border-color: #555 !important;
+  cursor: not-allowed !important;
+  box-shadow: none !important;
+  transform: none !important;
+}
+
+.pixel-item-box .item-icon {
+  font-size: 30px;
+  margin-bottom: 8px;
+}
+
+.pixel-item-box .item-details {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  font-family: 'Sarabun', sans-serif;
+  font-size: 0.8rem;
+  text-align: center;
+}
+
+.pixel-item-box .item-label {
+  color: #aaa;
+  font-weight: 700;
+}
+
+.pixel-item-box .item-qty {
+  font-size: 1.1rem;
+  font-weight: 800;
+  color: #fff;
+  margin-top: 5px;
+}
+
+.pixel-item-box.disabled .item-label {
+  color: #555 !important;
+}
+
+.pixel-item-box.disabled .item-qty {
+  color: #444 !important;
+}
+/* =========================================
    อัปเดตโซนตัวบอสสำหรับรองรับรูปภาพ <img>
 ========================================= */
 .boss-sprite-container {
